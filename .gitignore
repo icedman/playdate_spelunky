@@ -1,0 +1,8 @@
+build/*
+playdate/build
+playdate/Source
+playdate/CMakeCache.txt
+playdate/CMakeFiles
+playdate/cmake_install.cmake
+**/*.pdx/
+**/*.so
