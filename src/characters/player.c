@@ -9,36 +9,64 @@ bool PlayerIsDucking(entity_t *t) {
   return t->state == DUCKING || t->state == CRAWLING;
 }
 
-bool PlayerIsIdle(entity_t *t) { return t->state == IDLE || t->state == WHOA; }
+bool PlayerIsIdle(entity_t *t) {
+  if (t->jumpTime > 0 || t->attackTime > 0) {
+    return false;
+  }
+  return t->state == IDLE || t->state == WHOA;
+}
 
 void PlayerOnUpdate(entity_t *t, float dt) {
   game_t *gm = GameInstance();
   t->frameSpeed = 12;
 
-  float walkSpeed = 64;
-  float runMultiplier = 1.5;
-  float crawlSpeed = 32;
-  float climbSpeed = 64;
-  float jumpSpeed = 32 * 10;
-  float fallSpeed = 32 * 12;
+  float walkSpeed = 32 * 3;
+  float runMultiplier = 1.8;
+  float runFrameMultipler = 1.2;
+  float crawlSpeed = 32 * 1;
+  float climbSpeed = 32 * 2;
+  float jumpSpeed = 32 * 8;
+  float fallSpeed = 32 * 10;
 
+  float attackTime = 0.4;
+  float runTime = 0.25;
+  float jumpTime = 0.35;
+
+  bool tryAttack = false;
   bool tryJump = false;
   bool tryDuck = false;
+  bool hanging = false;
 
-  RectInitXYWH(&t->collisionBounds, 6, 0, 32 - 12, 32);
+  RectInitXYWH(&t->collisionBounds, 6, 4, 32 - 12, 32 - 4);
+  EntityCollideEnvironment(t, &t->velocity);
 
-  // climb
-  if (t->state == CLIMBING) {
-    t->frameSpeed = 0;
-    t->direction.y = 0;
-    if (gm->keys[DOWN]) {
-      t->frameSpeed = 6;
-      t->direction.y = climbSpeed;
-    }
-    if (gm->keys[UP]) {
-      t->frameSpeed = 6;
-      t->direction.y = -climbSpeed;
-    }
+  VectorZero(&t->direction);
+
+  // float speed = 32*4;
+  // if (gm->keys[UP]) {
+  //   t->position.y -= speed*dt;
+  // }
+  // if (gm->keys[DOWN]) {
+  //   t->position.y += speed*dt;
+  // }
+  // if (gm->keys[LEFT]) {
+  //   t->position.x -= speed*dt;
+  // }
+  // if (gm->keys[RIGHT]) {
+  //   t->position.x += speed*dt;
+  // }
+  // return;
+
+  // run
+  int to180 = gm->keys[CRANK] - 180;
+  to180 = ABS(to180);
+  if (to180 < 40) {
+    t->runTime = 0.25;
+  }
+
+  // attack
+  if (gm->keysPressed[FIRE1]) {
+    tryAttack = true;
   }
 
   // duck
@@ -54,11 +82,21 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   }
 
   if (gm->keys[LEFT]) {
-    t->direction.x = -walkSpeed;
+    if (!t->leftCollision || t->state == FALLING) {
+      hanging = t->state == FALLING;
+      t->direction.x = -walkSpeed;
+    } else {
+      t->direction.x = walkSpeed;
+    }
     t->state = PlayerIsDucking(t) ? CRAWLING : WALKING;
     t->flipSprite = false;
   } else if (gm->keys[RIGHT]) {
-    t->direction.x = walkSpeed;
+    if (!t->rightCollision || t->state == FALLING) {
+      hanging = t->state == FALLING;
+      t->direction.x = walkSpeed;
+    } else {
+      t->direction.x = -walkSpeed;
+    }
     t->state = PlayerIsDucking(t) ? CRAWLING : WALKING;
     t->flipSprite = true;
   } else {
@@ -66,8 +104,18 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->state = PlayerIsDucking(t) ? DUCKING : IDLE;
   }
 
+  if (hanging) {
+    if ((gm->keys[LEFT] && t->leftCollision) ||
+        (gm->keys[RIGHT] && t->rightCollision)) {
+      // todo only allow climb to ledge
+      jumpTime *= 0.5;
+    } else {
+      hanging = false;
+    }
+  }
+
   // jump
-  if (gm->keysPressed[FIRE1]) {
+  if (gm->keysPressed[FIRE2]) {
     tryJump = true;
   }
 
@@ -85,60 +133,48 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   lshoulder.y += 2;
   rshoulder.y += 2;
   lfoot.x += 4;
-  lfoot.y += 2;
+  lfoot.y += 1;
   rfoot.x -= 4;
-  rfoot.y += 2;
+  rfoot.y += 1;
 
   entity_t *ladder = NULL;
   entity_t *ladderFoot = NULL;
   entity_t *leftPlatform = NULL;
   entity_t *rightPlatform = NULL;
-  entity_t *leftBlock = NULL;
-  entity_t *rightBlock = NULL;
-  entity_t *blockTop = NULL;
+  entity_t *centerPlatform = t->bottomCollision;
+  entity_t *leftBlock = t->leftCollision;
+  entity_t *rightBlock = t->rightCollision;
+  entity_t *blockTop = t->topCollision;
 
   int collisionsChecked = 0;
 
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
+    n = n->next;
     rect_t r = RectOffset(e->collisionBounds, e->position);
     if (IsLadderEntity(e)) {
       if (RectContains(r, center)) {
+        // ladderFoot->renderCollisionBounds = true;
         ladderFoot = e;
-        ladderFoot->renderCollisionBounds = true;
       }
       if (RectContains(r, midCenter)) {
+        // ladder->renderCollisionBounds = true;
         ladder = e;
-        ladder->renderCollisionBounds = true;
       }
     }
     if (!IsSolidEntity(e) || !AreEntitiesNear(e, t) || e == t) {
-      n = n->next;
       continue;
     }
     collisionsChecked++;
-    if (RectContains(r, midCenter)) {
-      e->renderCollisionBounds = true;
-      blockTop = e;
-    }
     if (RectContains(r, lfoot)) {
-      e->renderCollisionBounds = true;
+      // e->renderCollisionBounds = true;
       leftPlatform = e;
     }
     if (RectContains(r, rfoot)) {
-      e->renderCollisionBounds = true;
+      // e->renderCollisionBounds = true;
       rightPlatform = e;
     }
-    if (RectContains(r, lshoulder)) {
-      e->renderCollisionBounds = true;
-      leftBlock = e;
-    }
-    if (RectContains(r, rshoulder)) {
-      e->renderCollisionBounds = true;
-      rightBlock = e;
-    }
-    n = n->next;
   }
 
   bool onLeftPlatform = leftPlatform;
@@ -147,9 +183,8 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   bool onLadder = ladder || ladderFoot;
 
   // jump only on plaforms or getting off ladder
-  if (tryJump && t->jumpTime <= 0 &&
-      (onPlatform || (onLadder && (gm->keys[LEFT] || gm->keys[RIGHT])))) {
-    t->jumpTime = 0.25;
+  if (tryJump && t->jumpTime <= 0 && (onPlatform || onLadder || hanging)) {
+    t->jumpTime = jumpTime;
   }
 
   // on edge
@@ -168,27 +203,17 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->jumpTime *= 0.98;
     if (t->jumpTime < 0.1)
       t->jumpTime = 0;
-    leftBlock = NULL;
-    rightBlock = NULL;
   }
 
   if (leftBlock && t->direction.x < 0) {
-    t->position.x = leftBlock->position.x + leftBlock->collisionBounds.rt.x -
-                    t->collisionBounds.lt.x;
     if (t->state == WALKING && !onLadder) {
       t->state = PUSHING;
     }
   }
   if (rightBlock && t->direction.x > 0) {
-    t->position.x = rightBlock->position.x + rightBlock->collisionBounds.lt.x -
-                    t->collisionBounds.rt.x;
     if (t->state == WALKING && !onLadder) {
       t->state = PUSHING;
     }
-  }
-  if (onPlatform && t->direction.y > -1) {
-    entity_t *platform = leftPlatform ? leftPlatform : rightPlatform;
-    t->position.y = platform->position.y - t->collisionBounds.rb.y - 0.25;
   }
 
   if (onLadder) {
@@ -210,14 +235,36 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->state = CLIMBING;
     t->renderCollisionBounds = true;
   }
+
   // climbing up
   if (gm->keys[UP]) {
     if (ladder) {
       t->state = CLIMBING;
       t->renderCollisionBounds = true;
+    } else if (t->state == CLIMBING) {
+      t->frameSpeed = 0;
+      t->direction.y = 0;
     }
   }
 
+  // climb
+  if (t->state == CLIMBING) {
+    t->frameSpeed = 0;
+    t->direction.y = 0;
+    if (gm->keys[DOWN]) {
+      t->frameSpeed = 6;
+      t->direction.y = climbSpeed;
+    }
+    if (gm->keys[UP]) {
+      t->frameSpeed = 6;
+      t->direction.y = -climbSpeed;
+      if (onPlatform) {
+        t->direction.y *= 10;
+      }
+    }
+  }
+
+  // idle
   if (!PlayerIsIdle(t)) {
     t->idleTime = 0;
   } else {
@@ -234,13 +281,49 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   if (t->runTime > 0) {
     t->runTime -= dt;
     t->direction.x *= runMultiplier;
-    t->frameSpeed *= runMultiplier;
+    t->frameSpeed *= runFrameMultipler;
   }
 
-  t->spriteSheet = SpriteSheet(PLAYER, t->state);
+  int finalFrame = t->state;
+  if (hanging) {
+    finalFrame = JUMPING;
+  }
+
+  if (tryAttack) {
+    // check if holding something
+    if (t->attackTime <= 0) {
+      t->attackTime = attackTime;
+      t->frame = 0;
+    }
+  }
+
+  // attack
+  entity_t *w = GameInstance()->whip;
+  w->invisible = true;
+  if (t->attackTime > 0) {
+    t->attackTime -= dt;
+    finalFrame = ATTACKING;
+    w->invisible = false;
+    w->flipSprite = !t->flipSprite;
+    w->frame = t->frame;
+    w->position = t->position;
+    w->position.y += 4;
+    if (t->frame < 1.5) {
+      w->spriteSheet = SpriteSheet(WHIP, 0);
+      w->position.x += 24 * (t->flipSprite ? -1 : 1);
+    } else {
+      w->spriteSheet = SpriteSheet(WHIP, 1);
+      w->position.x += 24 * (t->flipSprite ? 1 : -1);
+    }
+    if (t->frame > 10) {
+      t->frame = 10;
+    }
+  }
+
+  t->spriteSheet = SpriteSheet(PLAYER, finalFrame);
   t->velocity = t->direction;
 
-  if (t->state == JUMPING) {
+  if (t->state == JUMPING && !ladder && !blockTop) {
     vector_t j;
     VectorInit(&j, 0, -jumpSpeed, 0);
     t->velocity = VectorAdded(&t->velocity, &j);
@@ -253,7 +336,9 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->velocity = VectorAdded(&t->velocity, &g);
   }
 
-  if (t->state == IDLE) {
+  if (finalFrame == IDLE) {
     t->frame = 0;
   }
+
+  // printf("%d\n", collisionsChecked);
 }

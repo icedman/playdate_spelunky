@@ -45,6 +45,7 @@ typedef struct {
   list_t *entities;
   scene_t *menu;
   entity_t *player;
+  entity_t *whip;
 
   int currentLevel;
   float countDown;

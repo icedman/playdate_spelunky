@@ -324,6 +324,30 @@ game/src/game.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/game.c.s
 .PHONY : game/src/game.c.s
 
+game/src/items/whip.o: game/src/items/whip.c.o
+.PHONY : game/src/items/whip.o
+
+# target to build an object file
+game/src/items/whip.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/items/whip.c.o
+.PHONY : game/src/items/whip.c.o
+
+game/src/items/whip.i: game/src/items/whip.c.i
+.PHONY : game/src/items/whip.i
+
+# target to preprocess a source file
+game/src/items/whip.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/items/whip.c.i
+.PHONY : game/src/items/whip.c.i
+
+game/src/items/whip.s: game/src/items/whip.c.s
+.PHONY : game/src/items/whip.s
+
+# target to generate assembly for a file
+game/src/items/whip.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/items/whip.c.s
+.PHONY : game/src/items/whip.c.s
+
 game/src/map.o: game/src/map.c.o
 .PHONY : game/src/map.o
 
@@ -645,6 +669,9 @@ help:
 	@echo "... game/src/game.o"
 	@echo "... game/src/game.i"
 	@echo "... game/src/game.s"
+	@echo "... game/src/items/whip.o"
+	@echo "... game/src/items/whip.i"
+	@echo "... game/src/items/whip.s"
 	@echo "... game/src/map.o"
 	@echo "... game/src/map.i"
 	@echo "... game/src/map.s"

@@ -108,6 +108,7 @@ int main(int argc, char **argv) {
   // SDL_GetCurrentDisplayMode(0, &dm);
 
   ContextInit(&context, width, height);
+  context.renderDebug = true;
 
   window = SDL_CreateWindow(
       "", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height,
@@ -155,11 +156,21 @@ int main(int argc, char **argv) {
         case SDLK_SPACE:
           game.keys[SPACE] = down;
           break;
-        case SDLK_a:
+        case SDLK_s:
           game.keys[FIRE1] = down;
           break;
-        case SDLK_s:
+        case SDLK_a:
           game.keys[FIRE2] = down;
+          break;
+        case SDLK_e:
+          if (down) {
+            game.keys[CRANK] = 180;
+          }
+          break;
+        case SDLK_d:
+          if (down) {
+            game.keys[CRANK] = 0;
+          }
           break;
         }
       }
@@ -175,7 +186,11 @@ int main(int argc, char **argv) {
       dt = 64;
     }
 
-    GameUpdate(&game, dt / 1000);
+    int pre = 3;
+    dt = dt / (1000 * pre);
+    for (int i = 0; i < pre; i++) {
+      GameUpdate(&game, dt);
+    }
     if (game.done)
       break;
 
@@ -186,12 +201,24 @@ int main(int argc, char **argv) {
       offsetX = newOffsetX;
       offsetY = newOffsetY;
     } else {
-      offsetX *= 4;
-      offsetX += newOffsetX;
-      offsetX /= 5;
-      offsetY *= 4;
-      offsetY += newOffsetY;
-      offsetY /= 5;
+      int lerp = game.player->state == FALLING ? 8 : 20;
+      float dx = offsetX - newOffsetX;
+      float dy = offsetY - newOffsetY;
+      int snapDistance = 4;
+      if (ABS(dx) < snapDistance) {
+        offsetX = newOffsetX;
+      } else {
+        offsetX *= (lerp - 1);
+        offsetX += newOffsetX;
+        offsetX /= lerp;
+      }
+      if (ABS(dy) < snapDistance) {
+        offsetY = newOffsetY;
+      } else {
+        offsetY *= (lerp - 1);
+        offsetY += newOffsetY;
+        offsetY /= lerp;
+      }
     }
     if (offsetX > 0) {
       offsetX = 0;

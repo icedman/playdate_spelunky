@@ -26,6 +26,7 @@ src_files = [
     'src/srcRoomGen1.c',
     'src/characters/snake.c',
     'src/characters/player.c',
+    'src/items/whip.c',
 ]
 
 src_includes = include_directories(

@@ -5,7 +5,8 @@
 
 typedef enum {
   EMPTY_SPACE = 0,
-  //
+  // blocks
+  START_BLOCKS,
   BLOCK,
   BRICK,
   BRICK_2,
@@ -27,17 +28,25 @@ typedef enum {
   VINE_BOTTOM,
   VINE_SOURCE,
   VINE_TOP,
-  //
   ENTRANCE,
   EXIT,
-  // traps
   SPIKES,
   SPIKES_BLOOD,
+  END_BLOCKS,
   // characters
+  START_CHARACTERS,
   PLAYER,
-  SNAKE,
   DAMSEL,
-  TYPE_END
+  END_CHARACTERS,
+  // enemies
+  START_ENEMIES,
+  SNAKE,
+  END_ENEMIES,
+  // items
+  START_ITEMS,
+  WHIP,
+  END_ITEMS,
+  TYPE_END,
 } objectType_e;
 
 typedef struct {
@@ -53,6 +62,13 @@ objectDefinition_t *ObjectDefinition(objectType_e t);
 
 bool AreEntitiesNear(entity_t *entity1, entity_t *entity2);
 bool IsSolidEntity(entity_t *entity);
+bool IsItemEntity(entity_t *entity);
+bool IsEnemyEntity(entity_t *entity);
+bool IsBlockEntity(entity_t *entity);
+bool IsCharacterEntity(entity_t *entity);
 bool IsLadderEntity(entity_t *entity);
+void EnemyEntityDie(entity_t *entity);
+
+void EntityCollideEnvironment(entity_t *t, vector_t *direction);
 
 #endif // _DATA_H_

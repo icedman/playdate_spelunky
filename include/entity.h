@@ -29,6 +29,7 @@ typedef struct entity_t {
   vector_t velocity;
   float radius;
   float life;
+  float ticks;
   int type;
   bool invisible;
   bool entered;
@@ -37,11 +38,14 @@ typedef struct entity_t {
   void (*onExit)(struct entity_t *);
   void (*onUpdate)(struct entity_t *, float delta_time);
   void (*onRender)(struct entity_t *, context_t *context);
+  void (*onEffect)(struct entity_t *, float delta_time);
   void *data;
 
+  float effectTime;
   float idleTime;
   float jumpTime;
   float runTime;
+  float attackTime;
 
   spriteSheet_t *spriteSheet;
   entityState_t state;
@@ -51,6 +55,16 @@ typedef struct entity_t {
 
   rect_t collisionBounds;
   bool renderCollisionBounds;
+
+  union {
+    struct entity_t *collisions[4];
+    struct {
+      struct entity_t *leftCollision;
+      struct entity_t *rightCollision;
+      struct entity_t *topCollision;
+      struct entity_t *bottomCollision;
+    };
+  };
 
   int hp;
 } entity_t;
@@ -62,5 +76,7 @@ void EntitiesCreateParticles(list_t *entityList, vector_t position, int count,
 void EntitiesCreateExplosion(list_t *entityList, vector_t position);
 void EntitiesCreateFloatingText(list_t *entityList, char *text,
                                 vector_t position);
+
+void EffectFlicker(entity_t *, float delta_time);
 
 #endif // _ENTITY_H_

@@ -247,23 +247,23 @@ bool RectCollide(rect_t r1, rect_t r2) {
   float r2h = RectHeight(r2);
 
   // are the sides of one rectangle touching the other?
-  if (r1x + r1w >= r2x && // r1 right edge past r2 left
-      r1x <= r2x + r2w && // r1 left edge past r2 right
-      r1y + r1h >= r2y && // r1 top edge past r2 bottom
-      r1y <= r2y + r2h) { // r1 bottom edge past r2 top
+  if (r1x + r1w > r2x && // r1 right edge past r2 left
+      r1x < r2x + r2w && // r1 left edge past r2 right
+      r1y + r1h > r2y && // r1 top edge past r2 bottom
+      r1y < r2y + r2h) { // r1 bottom edge past r2 top
     return true;
   }
   return false;
 }
 
 bool RectContains(rect_t r, vector_t v) {
-  if (v.x <= r.lt.x)
+  if (v.x < r.lt.x)
     return false;
-  if (v.y <= r.lt.y)
+  if (v.y < r.lt.y)
     return false;
-  if (v.x >= r.rb.x)
+  if (v.x > r.rb.x)
     return false;
-  if (v.y >= r.rb.y)
+  if (v.y > r.rb.y)
     return false;
   return true;
 }
@@ -278,4 +278,11 @@ int RectEdgeContains(rect_t r, vector_t v) {
   if (r.lt.x == v.x && r.lt.y <= v.y && r.lb.y >= v.y)
     return 3;
   return -1;
+}
+
+vector_t RectCenter(rect_t r) {
+  vector_t lt = r.lt;
+  lt.x += RectWidth(r) / 2;
+  lt.y += RectHeight(r) / 2;
+  return lt;
 }

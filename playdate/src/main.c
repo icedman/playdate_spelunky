@@ -98,7 +98,7 @@ void _drawImage(context_t *context, void *image, vector_t pos, bool flipped) {
   int sw = 32;
   int sh = 32;
   pd->graphics->getBitmapData(image, &sw, &sh, NULL, NULL, NULL);
-  float tw = ((sw * 3) + 32)/4;
+  float tw = ((sw * 3) + 32) / 4;
   float sz = (float)tw / sw;
   vt.x += 32 / 2 - sw / 2;
   vt.y += 32 / 2 - sh / 2;
@@ -162,8 +162,8 @@ static int update(void *userdata) {
   context.renderer = pd;
   context.drawLine = _drawLine;
 
-  // float dt = pd->system->getElapsedTime()/1000;
-  float dt = 0.04;
+  // float dt = pd->system->getElapsedTime();
+  // pd->system->resetElapsedTime();
 
   PDButtons current;
   pd->system->getButtonState(&current, NULL, NULL);
@@ -174,8 +174,13 @@ static int update(void *userdata) {
   game.keys[RIGHT] = (current & kButtonRight);
   game.keys[FIRE1] = (current & kButtonA);
   game.keys[FIRE2] = (current & kButtonB);
+  game.keys[CRANK] = pd->system->getCrankAngle();
 
-  GameUpdate(&game, dt);
+  int pre = 8;
+  float dt = 0.04 / pre;
+  for (int i = 0; i < pre; i++) {
+    GameUpdate(&game, dt);
+  }
 
   // camera
   float newOffsetX = (width / 2 - game.player->position.x);
@@ -184,12 +189,24 @@ static int update(void *userdata) {
     offsetX = newOffsetX;
     offsetY = newOffsetY;
   } else {
-    offsetX *= 4;
-    offsetX += newOffsetX;
-    offsetX /= 5;
-    offsetY *= 4;
-    offsetY += newOffsetY;
-    offsetY /= 5;
+    int lerp = game.player->state == FALLING ? 8 : 20;
+    float dx = offsetX - newOffsetX;
+    float dy = offsetY - newOffsetY;
+    int snapDistance = 4;
+    if (ABS(dx) < snapDistance) {
+      offsetX = newOffsetX;
+    } else {
+      offsetX *= (lerp - 1);
+      offsetX += newOffsetX;
+      offsetX /= lerp;
+    }
+    if (ABS(dy) < snapDistance) {
+      offsetY = newOffsetY;
+    } else {
+      offsetY *= (lerp - 1);
+      offsetY += newOffsetY;
+      offsetY /= lerp;
+    }
   }
 
   if (offsetX > 0) {

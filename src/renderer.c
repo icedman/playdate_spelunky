@@ -9,7 +9,6 @@
 void RenderShape(context_t *context, float *points, vector_t pos, float angle,
                  float radius, bool close) {
   points += 3;
-
   polygon_t p;
   p.sides = 0;
   for (int i = 0; i < POLYGON_MAX_SIDES; i++) {
@@ -44,6 +43,9 @@ void RenderFloatingText(entity_t *entity, context_t *context) {
 }
 
 void RenderSprite(entity_t *e, context_t *context) {
+  if (e->invisible)
+    return;
+
   spriteSheet_t *ss = e->spriteSheet;
   if (ss && ss->images[0] == NULL) {
     for (int i = 0; i < ss->frames; i++) {
@@ -60,7 +62,7 @@ void RenderSprite(entity_t *e, context_t *context) {
   }
 
   // collision bounds
-  if (e->renderCollisionBounds) {
+  if (context->renderDebug && e->renderCollisionBounds) {
     vector_t lt = e->collisionBounds.lt;
     vector_t rb = e->collisionBounds.rb;
     float points[] = {0,    0,    0, lt.x, lt.y, 0, rb.x, lt.y, 0,

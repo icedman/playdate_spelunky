@@ -11,9 +11,14 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
   objectDefinition_t *def = NULL;
 
   switch (tile) {
-  case '*':
+
+  case PLAYER:
     def = ObjectDefinition(PLAYER);
     break;
+  case WHIP:
+    def = ObjectDefinition(WHIP);
+    break;
+
   case '.': { // block/brick
     if (Rand(1, 10) == 1) {
       def = ObjectDefinition(BLOCK);
@@ -117,11 +122,27 @@ void MapCreateEntities(map_t *map, list_t *entities) {
   }
 
   // create player
-  entity_t *e = CreateEntityFromTile('*', map->startX, map->startY, map);
-  GameInstance()->player = e;
-  if (e) {
+  {
+    // whip
+    {
+      entity_t *e = CreateEntityFromTile(WHIP, map->startX, map->startY, map);
+      GameInstance()->whip = e;
+      node_t *n = NodeCreate(e, true);
+      ListAppend(entities, n);
+    }
+    // player1
+    entity_t *e = CreateEntityFromTile(PLAYER, map->startX, map->startY, map);
+    GameInstance()->player = e;
     node_t *n = NodeCreate(e, true);
     ListAppend(entities, n);
+
+    // snake test
+    {
+      entity_t *e =
+          CreateEntityFromTile('S', map->startX + 12, map->startY - 8, map);
+      node_t *n = NodeCreate(e, true);
+      ListAppend(entities, n);
+    }
   }
 }
 

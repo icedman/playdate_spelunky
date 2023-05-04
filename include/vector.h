@@ -54,6 +54,7 @@ typedef struct {
 
 void RectInitXYWH(rect_t *r, float x, float y, float w, float h);
 rect_t RectOffset(rect_t r, vector_t offset);
+vector_t RectCenter(rect_t r);
 float RectWidth(rect_t r);
 float RectHeight(rect_t r);
 bool RectContains(rect_t r, vector_t v);

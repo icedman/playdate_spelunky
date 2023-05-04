@@ -34,6 +34,7 @@ typedef struct {
   matrixStack_t matrixStack;
   void *renderer;
   drawLineFunction drawLine;
+  bool renderDebug;
 } context_t;
 
 void ContextInit(context_t *context, int width, int height);

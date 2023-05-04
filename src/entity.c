@@ -14,6 +14,13 @@ void EntitiesUpdate(list_t *entityList, float dt) {
     }
     if (e->onUpdate) {
       e->onUpdate(e, dt);
+
+      // effects
+      if (e->onEffect) {
+        e->onEffect(e, dt);
+      }
+
+      e->ticks += dt;
     }
     vector_t m = VectorScaled(&e->velocity, dt);
     e->position = VectorAdded(&e->position, &m);
@@ -96,4 +103,19 @@ void EntitiesCreateFloatingText(list_t *entityList, char *text,
   p->onRender = RenderFloatingText;
   p->data = text;
   ListAppend(entityList, NodeCreate(p, true));
+}
+
+void EffectFlicker(entity_t *e, float delta_time) {
+  int f = (int)(e->ticks * 100) % 5;
+  if (f == 0) {
+    e->invisible = !e->invisible;
+  }
+  if (e->effectTime > 0) {
+    e->effectTime -= delta_time;
+    if (e->effectTime <= 0) {
+      e->effectTime = 0;
+      e->onEffect = NULL;
+      e->invisible = false;
+    }
+  }
 }

@@ -7,6 +7,12 @@
             "label": "build",
             "type": "shell",
             "command": "ninja -C build && build/spelunky"
+        },
+        {
+            "label": "format",
+            "type": "shell",
+            "command": "clang-format -style=llvm -i ./src/**/*.c ./include/*.h ./playdate/src/*.c",
+            "problemMatcher": []
         }
     ]
 }
