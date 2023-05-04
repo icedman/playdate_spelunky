@@ -20,6 +20,7 @@ static spriteSheet_t sprite_defs[] = {
     {PLAYER * SHEET_OFFSET + WHOA, 7, "sprites/character/sWhoaLeft_%d.png", 0, 0, {NULL}},
     {WHIP * SHEET_OFFSET + 0, 1, "sprites/items/sWhipPreR.png", 0, 0, {NULL}},
     {WHIP * SHEET_OFFSET + 1, 1, "sprites/items/sWhipRight.png", 0, 0, {NULL}},
+    {PUSH_BLOCK * SHEET_OFFSET, 1, "sprites/blocks/sBlock.png", 0, 0, {NULL}},
     {BLOCK * SHEET_OFFSET, 1, "sprites/blocks/sBlock.png", 0, 0, {NULL}},
     {BRICK * SHEET_OFFSET, 1, "sprites/blocks/sBrick.png", 0, 0, {NULL}},
     {BRICK_2 * SHEET_OFFSET, 1, "sprites/blocks/sBrick2.png", 0, 0, {NULL}},

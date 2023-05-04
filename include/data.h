@@ -7,6 +7,7 @@ typedef enum {
   EMPTY_SPACE = 0,
   // blocks
   START_BLOCKS,
+  PUSH_BLOCK,
   BLOCK,
   BRICK,
   BRICK_2,

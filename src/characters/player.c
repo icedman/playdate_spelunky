@@ -10,7 +10,7 @@ bool PlayerIsDucking(entity_t *t) {
 }
 
 bool PlayerIsIdle(entity_t *t) {
-  if (t->jumpTime > 0 || t->attackTime > 0) {
+  if (t->jumpTime > 0 || t->attackTime > 0 || t->pushTime > 0) {
     return false;
   }
   return t->state == IDLE || t->state == WHOA;
@@ -130,7 +130,9 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   vector_t midCenter = lshoulder;
   center.x += (rfoot.x - lfoot.x) / 2;
   midCenter.x += (rfoot.x - lfoot.x) / 2;
+  lshoulder.x -= 2;
   lshoulder.y += 2;
+  rshoulder.x += 2;
   rshoulder.y += 2;
   lfoot.x += 4;
   lfoot.y += 1;
@@ -142,8 +144,8 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   entity_t *leftPlatform = NULL;
   entity_t *rightPlatform = NULL;
   entity_t *centerPlatform = t->bottomCollision;
-  entity_t *leftBlock = t->leftCollision;
-  entity_t *rightBlock = t->rightCollision;
+  entity_t *leftBlock = NULL;
+  entity_t *rightBlock = NULL;
   entity_t *blockTop = t->topCollision;
 
   int collisionsChecked = 0;
@@ -175,12 +177,20 @@ void PlayerOnUpdate(entity_t *t, float dt) {
       // e->renderCollisionBounds = true;
       rightPlatform = e;
     }
+    if (RectContains(r, lshoulder)) {
+      // e->renderCollisionBounds = true;
+      leftBlock = e;
+    }
+    if (RectContains(r, rshoulder)) {
+      // e->renderCollisionBounds = true;
+      rightBlock = e;
+    }
   }
 
   bool onLeftPlatform = leftPlatform;
   bool onRightPlatform = rightPlatform;
   bool onPlatform = leftPlatform || rightPlatform;
-  bool onLadder = ladder || ladderFoot;
+  bool onLadder = ladder && ladderFoot;
 
   // jump only on plaforms or getting off ladder
   if (tryJump && t->jumpTime <= 0 && (onPlatform || onLadder || hanging)) {
@@ -203,17 +213,6 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->jumpTime *= 0.98;
     if (t->jumpTime < 0.1)
       t->jumpTime = 0;
-  }
-
-  if (leftBlock && t->direction.x < 0) {
-    if (t->state == WALKING && !onLadder) {
-      t->state = PUSHING;
-    }
-  }
-  if (rightBlock && t->direction.x > 0) {
-    if (t->state == WALKING && !onLadder) {
-      t->state = PUSHING;
-    }
   }
 
   if (onLadder) {
@@ -264,6 +263,26 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     }
   }
 
+  // pushing
+  if (onPlatform || onLadder) {
+    if (leftBlock && gm->keys[LEFT]) {
+      if (t->state != PUSHING && (!onLadder || leftBlock)) {
+        t->state = PUSHING;
+        t->push = leftBlock;
+      }
+    }
+    if (rightBlock && gm->keys[RIGHT]) {
+      if (t->state != PUSHING && (!onLadder || rightBlock)) {
+        t->state = PUSHING;
+        t->push = rightBlock;
+      }
+    }
+  }
+  if (t->state != PUSHING) {
+    t->pushTime = 0;
+    t->push = NULL;
+  }
+
   // idle
   if (!PlayerIsIdle(t)) {
     t->idleTime = 0;
@@ -297,6 +316,12 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     }
   }
 
+  if (finalFrame == PUSHING) {
+    if (t->pushTime < 0.5) {
+      finalFrame = WALKING;
+    }
+    t->pushTime += dt;
+  }
   // attack
   entity_t *w = GameInstance()->whip;
   w->invisible = true;

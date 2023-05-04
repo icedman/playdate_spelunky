@@ -2,25 +2,19 @@
 #include "entity.h"
 #include "game.h"
 
-// snake
-void SnakeOnEnter(entity_t *t) {}
+void PushBlockOnEnter(entity_t *t) {}
 
-void SnakeOnUpdate(entity_t *t, float dt) {
-  if (t->life > 0 || t->onEffect) {
-    // dead or dying
-    return;
-  }
-
+void PushBlockOnUpdate(entity_t *t, float dt) {
   game_t *gm = GameInstance();
 
   float fallSpeed = 32 * 14;
 
-  RectInitXYWH(&t->collisionBounds, 6, 8, 32 - 12, 32 - 8);
+  RectInitXYWH(&t->collisionBounds, 2, 2, 32 - 4, 32 - 2);
   EntityCollideEnvironment(t, &t->velocity);
 
   rect_t tr = RectOffset(t->collisionBounds, t->position);
 
-  // t->renderCollisionBounds = true;
+  t->renderCollisionBounds = true;
 
   vector_t lfoot = VectorAdded(&t->position, &t->collisionBounds.lb);
   vector_t rfoot = VectorAdded(&t->position, &t->collisionBounds.rb);
@@ -32,6 +26,8 @@ void SnakeOnUpdate(entity_t *t, float dt) {
   entity_t *leftPlatform = NULL;
   entity_t *rightPlatform = NULL;
 
+  VectorZero(&t->direction);
+
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
@@ -41,15 +37,9 @@ void SnakeOnUpdate(entity_t *t, float dt) {
     }
     rect_t r = RectOffset(e->collisionBounds, e->position);
     if (e == gm->player) {
-      if (e->onEffect)
-        continue;
       if (RectCollide(r, tr)) {
-        if (e->state == FALLING) {
-          EnemyEntityDie(t);
-        } else {
-          e->onEffect = EffectFlicker;
-          e->effectTime = 1.25;
-          e->renderCollisionBounds = true;
+        if (t == e->push && e->state == PUSHING && e->pushTime >= 0.5) {
+          t->direction = VectorScaled(&e->velocity, 0.8);
         }
       }
       continue;
@@ -64,8 +54,6 @@ void SnakeOnUpdate(entity_t *t, float dt) {
       rightPlatform = e;
     }
   }
-
-  // snake logic
 
   t->velocity = t->direction;
 

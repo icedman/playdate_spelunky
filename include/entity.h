@@ -46,6 +46,7 @@ typedef struct entity_t {
   float jumpTime;
   float runTime;
   float attackTime;
+  float pushTime;
 
   spriteSheet_t *spriteSheet;
   entityState_t state;
@@ -65,6 +66,7 @@ typedef struct entity_t {
       struct entity_t *bottomCollision;
     };
   };
+  struct entity_t *push;
 
   int hp;
 } entity_t;

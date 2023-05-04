@@ -502,14 +502,14 @@ void scrRoomGen1(map_t *map, int x, int y) {
   char strObs3[] = "00000";
 
   // Add obstacles
-  for (i = 1; i < 81; i += 1) {
+  for (i = 0; i < 80; i += 1) {
     j = i;
 
     strcpy(strObs1, "00000");
     strcpy(strObs2, "00000");
     strcpy(strObs3, "00000");
 
-    char tile = strTemp[i - 1];
+    char tile = strTemp[i];
     //				tile = string_char_at(strTemp, i);
 
     if (tile == '8') {

@@ -11,7 +11,6 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
   objectDefinition_t *def = NULL;
 
   switch (tile) {
-
   case PLAYER:
     def = ObjectDefinition(PLAYER);
     break;
@@ -44,6 +43,10 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
         def = ObjectDefinition(BRICK);
       }
     }
+    break;
+  }
+  case '4': { // push block
+    def = ObjectDefinition(PUSH_BLOCK);
     break;
   }
   case 's': { // snake
@@ -139,7 +142,7 @@ void MapCreateEntities(map_t *map, list_t *entities) {
     // snake test
     {
       entity_t *e =
-          CreateEntityFromTile('S', map->startX + 12, map->startY - 8, map);
+          CreateEntityFromTile('4', map->startX + 14, map->startY, map);
       node_t *n = NodeCreate(e, true);
       ListAppend(entities, n);
     }

@@ -4,6 +4,8 @@
 
 void PlayerOnEnter(entity_t *t);
 void PlayerOnUpdate(entity_t *t, float dt);
+void PushBlockOnEnter(entity_t *t);
+void PushBlockOnUpdate(entity_t *t, float dt);
 void SnakeOnEnter(entity_t *t);
 void SnakeOnUpdate(entity_t *t, float dt);
 void WhipOnEnter(entity_t *t);
@@ -12,6 +14,7 @@ void WhipOnUpdate(entity_t *t, float dt);
 // clang-format off
 static objectDefinition_t defs[] = {
   {EMPTY_SPACE, NULL, NULL, NULL, NULL},
+  {PUSH_BLOCK, PushBlockOnEnter, NULL, PushBlockOnUpdate, NULL},
   {BLOCK, NULL, NULL, NULL, NULL},
   {BRICK, NULL, NULL, NULL, NULL},
   {BRICK_2, NULL, NULL, NULL, NULL},
@@ -55,6 +58,7 @@ bool IsLadderEntity(entity_t *entity) {
 
 bool IsSolidEntity(entity_t *entity) {
   switch (entity->type) {
+  case PUSH_BLOCK:
   case BLOCK:
   case BRICK:
   case BRICK_2:
@@ -77,7 +81,7 @@ bool IsCharacterEntity(entity_t *entity) {
 
 void EnemyEntityDie(entity_t *entity) {
   entity->renderCollisionBounds = true;
-  entity->life = 0.35;
+  entity->life = 1.0;
   entity->onEffect = EffectFlicker;
 }
 

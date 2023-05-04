@@ -14,13 +14,11 @@ void EntitiesUpdate(list_t *entityList, float dt) {
     }
     if (e->onUpdate) {
       e->onUpdate(e, dt);
-
+      e->ticks += dt;
       // effects
       if (e->onEffect) {
         e->onEffect(e, dt);
       }
-
-      e->ticks += dt;
     }
     vector_t m = VectorScaled(&e->velocity, dt);
     e->position = VectorAdded(&e->position, &m);
