@@ -15,7 +15,7 @@ void WhipOnUpdate(entity_t *t, float dt) {
   RectInitXYWH(&t->collisionBounds, 0, 8, 32, 32 - 16);
   rect_t tr = RectOffset(t->collisionBounds, t->position);
 
-  t->renderCollisionBounds = true;
+  // t->renderCollisionBounds = true;
 
   node_t *n = gm->entities->first;
   while (n) {

@@ -47,6 +47,7 @@ typedef struct {
   entity_t *player;
   entity_t *whip;
 
+  int levelType;
   int currentLevel;
   float countDown;
   float ticks;

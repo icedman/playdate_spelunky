@@ -1,3 +1,4 @@
+#include "game.h"
 #include "map.h"
 #include "util.h"
 
@@ -25,6 +26,9 @@ strObs = "00000
 */
 
 void scrRoomGen1(map_t *map, int x, int y) {
+  int currentLevel = GameInstance()->currentLevel;
+  map->roomGen = 1;
+
   char strTemp[] =
       "000000000000000000000000000000000000000000000000000000000000"
       "00000000000000000000";
@@ -129,7 +133,7 @@ void scrRoomGen1(map_t *map, int x, int y) {
     }
     }
   } else if (roomPath == 0) { // side room
-    if (map->currentLevel > 1 && !map->altar && Rand(1, 16) == 1) {
+    if (currentLevel > 1 && !map->altar && Rand(1, 16) == 1) {
       n = 11;
       map->altar = true;
     } else if (map->idol || scrGetRoomY(y) == 3) {

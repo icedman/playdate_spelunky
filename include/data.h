@@ -8,6 +8,10 @@ typedef enum {
   // blocks
   START_BLOCKS,
   PUSH_BLOCK,
+  ALTAR_LEFT,
+  ALTAR_RIGHT,
+  SAC_ALTAR_LEFT,
+  SAC_ALTAR_RIGHT,
   BLOCK,
   BRICK,
   BRICK_2,
@@ -31,9 +35,13 @@ typedef enum {
   VINE_TOP,
   ENTRANCE,
   EXIT,
+  END_BLOCKS,
+  // traps
+  START_TRAPS,
+  GIANT_TIKI_HEAD,
   SPIKES,
   SPIKES_BLOOD,
-  END_BLOCKS,
+  END_TRAPS,
   // characters
   START_CHARACTERS,
   PLAYER,
@@ -42,11 +50,16 @@ typedef enum {
   // enemies
   START_ENEMIES,
   SNAKE,
+  BAT,
   END_ENEMIES,
   // items
   START_ITEMS,
   WHIP,
   END_ITEMS,
+  // cave
+  START_CAVE,
+  GOLD_IDOL,
+  END_CAVE,
   TYPE_END,
 } objectType_e;
 
@@ -68,8 +81,13 @@ bool IsEnemyEntity(entity_t *entity);
 bool IsBlockEntity(entity_t *entity);
 bool IsCharacterEntity(entity_t *entity);
 bool IsLadderEntity(entity_t *entity);
+bool IsBrickOrBlock(entity_t *entity);
 void EnemyEntityDie(entity_t *entity);
 
+void PlayerHurt(entity_t *t, int amount);
+
 void EntityCollideEnvironment(entity_t *t, vector_t *direction);
+entity_t *EntityAtPoint(vector_t pos, list_t *entities,
+                        bool (*filter)(entity_t *));
 
 #endif // _DATA_H_

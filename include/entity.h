@@ -12,6 +12,7 @@ typedef enum {
   ATTACKING,
   JUMPING,
   HANGING,
+  FLYING,
   DUCKING,
   CRAWLING,
   FALLING,

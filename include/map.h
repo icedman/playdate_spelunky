@@ -5,8 +5,7 @@
 #include "stdtypes.h"
 
 typedef struct {
-  int currentLevel;
-  int levelType;
+  int roomGen;
   int startRoomX;
   int startRoomY;
   int startX;
@@ -22,9 +21,6 @@ typedef struct {
   bool snakePit;
   int probSnakePit;
   char map[10 * 8 * 4 * 4];
-  // map_gfx_t gfx[10 * 8 * 4 * 4];
-  // map_gfx_t borderTB[(10 * 4) + 2];
-  // map_gfx_t borderLR[(8 * 4) + 2];
 } map_t;
 
 map_t *MapInstance();
@@ -34,7 +30,8 @@ int scrGetRoomY(float ty);
 int scrGetRoomX(float tx);
 void srcLevelGen(map_t *map);
 void srcRoomGen1(map_t *map);
-void scrRoomGen2(map_t *map, int x, int y);
-void scrRoomGen3(map_t *map, int x, int y);
+// void scrRoomGen2(map_t *map, int x, int y);
+// void scrRoomGen3(map_t *map, int x, int y);
+void srcEntityGen(map_t *map, list_t *entities);
 
 #endif // _MAP_H_

@@ -3,6 +3,12 @@
 #include "entity.h"
 #include "game.h"
 
+void PlayerHurt(entity_t *t, int amount) {
+  t->onEffect = EffectFlicker;
+  t->effectTime = 1.25;
+  t->renderCollisionBounds = true;
+}
+
 void PlayerOnEnter(entity_t *t) {}
 
 bool PlayerIsDucking(entity_t *t) {
@@ -21,7 +27,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   t->frameSpeed = 12;
 
   float walkSpeed = 32 * 3;
-  float runMultiplier = 1.8;
+  float runMultiplier = 1.5;
   float runFrameMultipler = 1.2;
   float crawlSpeed = 32 * 1;
   float climbSpeed = 32 * 2;
@@ -37,7 +43,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   bool tryDuck = false;
   bool hanging = false;
 
-  RectInitXYWH(&t->collisionBounds, 6, 4, 32 - 12, 32 - 4);
+  RectInitXYWH(&t->collisionBounds, 6, 6, 32 - 12, 32 - 6);
   EntityCollideEnvironment(t, &t->velocity);
 
   VectorZero(&t->direction);
@@ -115,7 +121,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   }
 
   // jump
-  if (gm->keysPressed[FIRE2]) {
+  if (gm->keys[FIRE2]) {
     tryJump = true;
   }
 
@@ -191,10 +197,16 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   bool onRightPlatform = rightPlatform;
   bool onPlatform = leftPlatform || rightPlatform;
   bool onLadder = ladder && ladderFoot;
+  bool onTopLadder = !ladder && ladderFoot;
 
   // jump only on plaforms or getting off ladder
-  if (tryJump && t->jumpTime <= 0 && (onPlatform || onLadder || hanging)) {
+  if (tryJump && t->jumpTime <= 0 &&
+      (onPlatform || onLadder || onTopLadder || hanging)) {
     t->jumpTime = jumpTime;
+  }
+
+  if (!tryJump) {
+    t->jumpTime *= 0.8;
   }
 
   // on edge
@@ -225,22 +237,23 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   }
 
   // fall
-  if (!onLadder && !onPlatform) {
+  if (!ladder && !ladderFoot && !onPlatform) {
     t->state = FALLING;
   }
 
   // climbing down
-  if (ladderFoot && (!onPlatform || gm->keys[DOWN])) {
+  if (ladderFoot && (ladder || gm->keys[DOWN])) {
     t->state = CLIMBING;
     t->renderCollisionBounds = true;
   }
 
   // climbing up
   if (gm->keys[UP]) {
-    if (ladder) {
+    if (ladderFoot) {
       t->state = CLIMBING;
       t->renderCollisionBounds = true;
     } else if (t->state == CLIMBING) {
+      t->state = IDLE;
       t->frameSpeed = 0;
       t->direction.y = 0;
     }
@@ -251,11 +264,11 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->frameSpeed = 0;
     t->direction.y = 0;
     if (gm->keys[DOWN]) {
-      t->frameSpeed = 6;
+      t->frameSpeed = 8;
       t->direction.y = climbSpeed;
     }
     if (gm->keys[UP]) {
-      t->frameSpeed = 6;
+      t->frameSpeed = 8;
       t->direction.y = -climbSpeed;
       if (onPlatform) {
         t->direction.y *= 10;
@@ -322,6 +335,13 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     }
     t->pushTime += dt;
   }
+
+  if (finalFrame == CLIMBING && !gm->keys[DOWN] && !gm->keys[UP]) {
+    if (ladder == ladderFoot) {
+      finalFrame = IDLE;
+    }
+  }
+
   // attack
   entity_t *w = GameInstance()->whip;
   w->invisible = true;

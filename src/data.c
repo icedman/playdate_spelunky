@@ -8,6 +8,8 @@ void PushBlockOnEnter(entity_t *t);
 void PushBlockOnUpdate(entity_t *t, float dt);
 void SnakeOnEnter(entity_t *t);
 void SnakeOnUpdate(entity_t *t, float dt);
+void BatOnEnter(entity_t *t);
+void BatOnUpdate(entity_t *t, float dt);
 void WhipOnEnter(entity_t *t);
 void WhipOnUpdate(entity_t *t, float dt);
 
@@ -15,6 +17,11 @@ void WhipOnUpdate(entity_t *t, float dt);
 static objectDefinition_t defs[] = {
   {EMPTY_SPACE, NULL, NULL, NULL, NULL},
   {PUSH_BLOCK, PushBlockOnEnter, NULL, PushBlockOnUpdate, NULL},
+  {GOLD_IDOL, NULL, NULL, NULL, NULL},
+  {ALTAR_LEFT, NULL, NULL, NULL, NULL},
+  {ALTAR_RIGHT, NULL, NULL, NULL, NULL},
+  {SAC_ALTAR_LEFT, NULL, NULL, NULL, NULL},
+  {SAC_ALTAR_RIGHT, NULL, NULL, NULL, NULL},
   {BLOCK, NULL, NULL, NULL, NULL},
   {BRICK, NULL, NULL, NULL, NULL},
   {BRICK_2, NULL, NULL, NULL, NULL},
@@ -22,6 +29,7 @@ static objectDefinition_t defs[] = {
   {LADDER_TOP, NULL, NULL, NULL, NULL},
   {PLAYER, PlayerOnEnter, NULL, PlayerOnUpdate, NULL},
   {SNAKE, SnakeOnEnter, NULL, SnakeOnUpdate, NULL},
+  {BAT, BatOnEnter, NULL, BatOnUpdate, NULL},
   {WHIP, WhipOnEnter, NULL, WhipOnUpdate, NULL},
   {SPIKES, NULL, NULL, NULL, NULL},
   {ENTRANCE, NULL, NULL, NULL, NULL},
@@ -58,13 +66,13 @@ bool IsLadderEntity(entity_t *entity) {
 
 bool IsSolidEntity(entity_t *entity) {
   switch (entity->type) {
-  case PUSH_BLOCK:
-  case BLOCK:
-  case BRICK:
-  case BRICK_2:
-    return true;
+  case LADDER:
+  case LADDER_TOP:
+  case ENTRANCE:
+  case EXIT:
+    return false;
   }
-  return false;
+  return (entity->type > START_BLOCKS && entity->type < END_BLOCKS);
 }
 
 bool IsEnemyEntity(entity_t *entity) {
@@ -77,6 +85,10 @@ bool IsBlockEntity(entity_t *entity) {
 
 bool IsCharacterEntity(entity_t *entity) {
   return (entity->type > START_CHARACTERS && entity->type < END_CHARACTERS);
+}
+
+bool IsBrickOrBlock(entity_t *entity) {
+  return entity->type == BRICK || entity->type == BLOCK;
 }
 
 void EnemyEntityDie(entity_t *entity) {
@@ -132,4 +144,21 @@ void EntityCollideEnvironment(entity_t *t, vector_t *direction) {
       }
     }
   }
+}
+
+entity_t *EntityAtPoint(vector_t pos, list_t *entities,
+                        bool (*filter)(entity_t *)) {
+  node_t *n = entities->first;
+  while (n) {
+    entity_t *e = n->data;
+    n = n->next;
+    if (filter && !filter(e)) {
+      continue;
+    }
+    rect_t r = RectOffset(e->collisionBounds, e->position);
+    if (RectContains(r, pos)) {
+      return e;
+    }
+  }
+  return NULL;
 }

@@ -1,3 +1,4 @@
+#include "game.h"
 #include "map.h"
 #include "util.h"
 
@@ -42,6 +43,9 @@ int scrGetRoomY(float ty) {
 }
 
 void srcLevelGen(map_t *map) {
+  memset(map, 0, sizeof(map_t));
+
+  int levelType = GameInstance()->levelType;
   int roomX, roomY, prevX, prevY, noStartX;
   int n, i, j, k;
   int sX1, sX2;
@@ -118,7 +122,7 @@ void srcLevelGen(map_t *map) {
     sX1 = 0;
     sX2 = 0;
     map->probSnakePit = 1;
-    if (map->levelType == 0) {
+    if (levelType == 0) {
       for (j = 0; j < 2; j += 1) {
         for (i = 0; i < 4; i += 1) {
           if (map->roomPath[i + j * 4] == 0 &&

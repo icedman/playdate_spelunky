@@ -9,7 +9,7 @@ void PushBlockOnUpdate(entity_t *t, float dt) {
 
   float fallSpeed = 32 * 14;
 
-  RectInitXYWH(&t->collisionBounds, 2, 2, 32 - 4, 32 - 2);
+  RectInitXYWH(&t->collisionBounds, 2, 0, 32 - 4, 32);
   EntityCollideEnvironment(t, &t->velocity);
 
   rect_t tr = RectOffset(t->collisionBounds, t->position);

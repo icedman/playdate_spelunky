@@ -8,6 +8,9 @@ void SnakeOnEnter(entity_t *t) {}
 void SnakeOnUpdate(entity_t *t, float dt) {
   if (t->life > 0 || t->onEffect) {
     // dead or dying
+    VectorZero(&t->direction);
+    VectorZero(&t->velocity);
+    t->frameSpeed = 0;
     return;
   }
 
@@ -44,12 +47,10 @@ void SnakeOnUpdate(entity_t *t, float dt) {
       if (e->onEffect)
         continue;
       if (RectCollide(r, tr)) {
-        if (e->state == FALLING) {
+        if (e->state == FALLING && e->position.y + 16 < t->position.y) {
           EnemyEntityDie(t);
         } else {
-          e->onEffect = EffectFlicker;
-          e->effectTime = 1.25;
-          e->renderCollisionBounds = true;
+          PlayerHurt(e, 1);
         }
       }
       continue;

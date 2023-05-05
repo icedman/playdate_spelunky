@@ -21,6 +21,11 @@ static spriteSheet_t sprite_defs[] = {
     {WHIP * SHEET_OFFSET + 0, 1, "sprites/items/sWhipPreR.png", 0, 0, {NULL}},
     {WHIP * SHEET_OFFSET + 1, 1, "sprites/items/sWhipRight.png", 0, 0, {NULL}},
     {PUSH_BLOCK * SHEET_OFFSET, 1, "sprites/blocks/sBlock.png", 0, 0, {NULL}},
+    {ALTAR_LEFT * SHEET_OFFSET, 1, "sprites/blocks/sAltarLeft.png", 0, 0, {NULL}},
+    {ALTAR_RIGHT * SHEET_OFFSET, 1, "sprites/blocks/sAltarRight.png", 0, 0, {NULL}},
+    {SAC_ALTAR_LEFT * SHEET_OFFSET, 1, "sprites/blocks/sSacAltarLeft.png", 0, 0, {NULL}},
+    {SAC_ALTAR_RIGHT * SHEET_OFFSET, 1, "sprites/blocks/sSacAltarRight.png", 0, 0, {NULL}},
+    {GOLD_IDOL * SHEET_OFFSET, 1, "sprites/cave/sGoldIdol.png", 0, 0, {NULL}},
     {BLOCK * SHEET_OFFSET, 1, "sprites/blocks/sBlock.png", 0, 0, {NULL}},
     {BRICK * SHEET_OFFSET, 1, "sprites/blocks/sBrick.png", 0, 0, {NULL}},
     {BRICK_2 * SHEET_OFFSET, 1, "sprites/blocks/sBrick2.png", 0, 0, {NULL}},
@@ -29,7 +34,13 @@ static spriteSheet_t sprite_defs[] = {
     {ENTRANCE * SHEET_OFFSET, 1, "sprites/blocks/sEntrance.png", 0, 0, {NULL}},
     {EXIT * SHEET_OFFSET, 1, "sprites/blocks/sExit.png", 0, 0, {NULL}},
     {SNAKE * SHEET_OFFSET, 1, "sprites/enemies/sSnakeLeft.png", 0, 0, {NULL}},
+    {BAT * SHEET_OFFSET, 3, "sprites/enemies/sBatLeft_%d.png", 0, 0, {NULL}},
+    {BAT * SHEET_OFFSET + HANGING, 1, "sprites/enemies/sBatHang.png", 0, 0, {NULL}},
     {SPIKES * SHEET_OFFSET, 1, "sprites/traps/sSpikes.png", 0, 0, {NULL}},
+    {GIANT_TIKI_HEAD * SHEET_OFFSET, 1, "sprites/traps/sGitantTikiHead.png", 0, 0, {NULL}},
+    {CAVE_UP * SHEET_OFFSET, 1, "sprites/blocks/sCaveUp.png", 0, 0, {NULL}},
+    {CAVE_UP_2 * SHEET_OFFSET, 1, "sprites/blocks/sCaveUp2.png", 0, 0, {NULL}},
+    {BRICK_DOWN * SHEET_OFFSET, 1, "sprites/blocks/sBrickDown.png", 0, 0, {NULL}},
     {TYPE_END * SHEET_OFFSET}};
 // clang-format on
 

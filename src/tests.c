@@ -7,11 +7,26 @@
 // base on Spelunky Room Generation by Derek Yu && Mossmouth, LLC
 // <http://spelunkyworld.com/>
 
-void testEnter(game_t *gm, scene_t *scn) {
+bool _buildLevel(game_t *gm, scene_t *scn) {
   GameDestroy(gm);
   ListDestroy(gm->entities);
-  MapInit(MapInstance());
-  MapCreateEntities(MapInstance(), gm->entities);
+
+  map_t *map = MapInstance();
+  MapInit(map);
+  MapCreateEntities(map, gm->entities);
+  MapSetupWalls(map, gm->entities);
+
+  printf("s:%d,%d e:%d,%d\n", map->startX, map->startY, map->exitX, map->exitY);
+  return (map->startX != 0 && map->startY != 0 && map->exitX != 0 &&
+          map->exitY != 0);
+}
+
+void testEnter(game_t *gm, scene_t *scn) {
+  for (int i = 0; i < 20; i++) {
+    if (_buildLevel(gm, scn))
+      break;
+    printf("retry %d\n", (i + 1));
+  }
 }
 
 void testUpdate(game_t *gm, scene_t *scn, float delta_time) {
@@ -20,11 +35,8 @@ void testUpdate(game_t *gm, scene_t *scn, float delta_time) {
     return;
   }
 
-  if (gm->keysPressed[FIRE1]) {
-    // GameDestroy(gm);
-    // ListDestroy(gm->entities);
-    // MapInit(MapInstance());
-    // MapCreateEntities(MapInstance(), gm->entities);
+  if (gm->keysPressed[SPACE]) {
+    testEnter(gm, scn);
   }
 
   if (gm->keys[LEFT]) {

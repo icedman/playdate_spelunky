@@ -132,6 +132,30 @@ spelunky/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/build
 .PHONY : spelunky/fast
 
+game/src/blocks/pushBlock.o: game/src/blocks/pushBlock.c.o
+.PHONY : game/src/blocks/pushBlock.o
+
+# target to build an object file
+game/src/blocks/pushBlock.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/blocks/pushBlock.c.o
+.PHONY : game/src/blocks/pushBlock.c.o
+
+game/src/blocks/pushBlock.i: game/src/blocks/pushBlock.c.i
+.PHONY : game/src/blocks/pushBlock.i
+
+# target to preprocess a source file
+game/src/blocks/pushBlock.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/blocks/pushBlock.c.i
+.PHONY : game/src/blocks/pushBlock.c.i
+
+game/src/blocks/pushBlock.s: game/src/blocks/pushBlock.c.s
+.PHONY : game/src/blocks/pushBlock.s
+
+# target to generate assembly for a file
+game/src/blocks/pushBlock.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/blocks/pushBlock.c.s
+.PHONY : game/src/blocks/pushBlock.c.s
+
 game/src/characters/player.o: game/src/characters/player.c.o
 .PHONY : game/src/characters/player.o
 
@@ -645,6 +669,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... spelunky"
+	@echo "... game/src/blocks/pushBlock.o"
+	@echo "... game/src/blocks/pushBlock.i"
+	@echo "... game/src/blocks/pushBlock.s"
 	@echo "... game/src/characters/player.o"
 	@echo "... game/src/characters/player.i"
 	@echo "... game/src/characters/player.s"

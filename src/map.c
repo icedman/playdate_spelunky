@@ -7,16 +7,71 @@ static map_t map;
 
 map_t *MapInstance() { return &map; }
 
-entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
+entity_t *CreateEntityFromTile(char tile, float x, float y, map_t *map) {
   objectDefinition_t *def = NULL;
 
+  if (tile == 0) {
+    return NULL;
+  }
+
   switch (tile) {
-  case PLAYER:
-    def = ObjectDefinition(PLAYER);
+  // altar
+  case 'A':
+    def = ObjectDefinition(ALTAR_LEFT);
     break;
-  case WHIP:
-    def = ObjectDefinition(WHIP);
+  // sacrifice altar
+  case 'x':
+    def = ObjectDefinition(SAC_ALTAR_LEFT);
     break;
+  // idol
+  case 'I':
+    def = ObjectDefinition(GOLD_IDOL);
+    x += 0.5;
+    break;
+  // giant tiki head
+  case 'B':
+    def = ObjectDefinition(GIANT_TIKI_HEAD);
+    break;
+
+    // // wanted sign
+    // case 'W':
+    //   break;
+    // // lamp/lampRed
+    // case 'l':
+    //   break;
+    // // shopKeeper
+    // case 'K':
+    //   break;
+    // // shop sign
+    // case 'k':
+    //   break;
+    // // shop item
+    // case 'i':
+    //   break;
+    // // dice
+    // case 'd':
+    //   break;
+    // // craps
+    // case 'Q':
+    //   break;
+    // // generate item in diceHouse
+    // case 'q':
+    //   break;
+    // // Damsel
+    // case 'D':
+    //   break;
+    // // RubyBig
+    // case 'T':
+    //   break;
+    // // Mattock
+    // case 'M':
+    //   break;
+    // // brickSmooth
+    // case 'b':
+    //   break;
+    // // ice block
+    // case '+':
+    //   break;
 
   case '.': { // block/brick
     if (Rand(1, 10) == 1) {
@@ -26,7 +81,6 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
     }
     break;
   }
-  case 'b':   // brick smooth
   case '1': { // block/brick
     if (Rand(1, 10) == 1) {
       def = ObjectDefinition(BLOCK);
@@ -73,17 +127,25 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
     def = ObjectDefinition(LADDER_TOP);
     break;
   case '9': // entrance/exit
-    if (scrGetRoomX(x) == map->startRoomX &&
+    if (map->startX == 0 && map->startY == 0 &&
+        scrGetRoomX(x) == map->startRoomX &&
         scrGetRoomY(y) == map->startRoomY) {
       def = ObjectDefinition(ENTRANCE);
       map->startX = x;
       map->startY = y;
     } else {
       def = ObjectDefinition(EXIT);
+      map->exitX = x;
+      map->exitY = y;
     }
+    // printf(">> entrance:%d,%d exit:%d,%d\n", map->startX, map->startY,
+    // map->exitX, map->exitY);
     break;
   default:
-    printf("unimplemented tile %c\n", tile);
+    def = ObjectDefinition(tile);
+    if (!def) {
+      printf("unimplemented tile %c %d\n", tile, tile);
+    }
     break;
   }
 
@@ -104,6 +166,9 @@ entity_t *CreateEntityFromTile(char tile, int x, int y, map_t *map) {
   return e;
 }
 
+// segmentation fault
+#include "srcEntityGen.c"
+
 void MapCreateEntities(map_t *map, list_t *entities) {
   for (int y = 0; y < 8 * 4; y++) {
     for (int x = 0; x < 10 * 4; x++) {
@@ -119,6 +184,21 @@ void MapCreateEntities(map_t *map, list_t *entities) {
         if (e) {
           node_t *n = NodeCreate(e, true);
           ListAppend(entities, n);
+
+          if (e->type == ALTAR_LEFT) {
+            entity_t *e = CreateEntityFromTile(ALTAR_RIGHT, x + 1, y, map);
+            if (e) {
+              node_t *n = NodeCreate(e, true);
+              ListAppend(entities, n);
+            }
+          }
+          if (e->type == SAC_ALTAR_LEFT) {
+            entity_t *e = CreateEntityFromTile(SAC_ALTAR_RIGHT, x + 1, y, map);
+            if (e) {
+              node_t *n = NodeCreate(e, true);
+              ListAppend(entities, n);
+            }
+          }
         }
       }
     }
@@ -142,18 +222,84 @@ void MapCreateEntities(map_t *map, list_t *entities) {
     // snake test
     {
       entity_t *e =
-          CreateEntityFromTile('4', map->startX + 14, map->startY, map);
+          CreateEntityFromTile(BAT, map->startX + 14, map->startY, map);
       node_t *n = NodeCreate(e, true);
       ListAppend(entities, n);
+    }
+  }
+
+  // entities and treasures
+  srcEntityGen(map, entities);
+}
+
+void MapSetupWalls(map_t *map, list_t *entities) {
+  node_t *n = entities->first;
+  while (n) {
+    entity_t *e = n->data;
+    n = n->next;
+    if (e->type != BRICK) {
+      continue;
+    }
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+
+    vector_t v = e->position;
+    v.x += 16;
+    v.y -= 16;
+    up = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+
+    v = e->position;
+    v.x += 16;
+    v.y += (16 + 32);
+    down = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+
+    v = e->position;
+    v.x -= 16;
+    v.y += 16;
+    left = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+
+    v = e->position;
+    v.x += (16 + 32);
+    v.y += 16;
+    right = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+
+    if (!up) {
+      e->spriteSheet = SpriteSheet(CAVE_UP, 0);
+    }
+
+    if (!down) {
+      if (!up) {
+        e->spriteSheet = SpriteSheet(CAVE_UP_2, 0);
+      } else {
+        e->spriteSheet = SpriteSheet(BRICK_DOWN, 0);
+      }
     }
   }
 }
 
 void MapInit(map_t *map) {
-  memset(map, 0, sizeof(map_t));
+  game_t *gm = GameInstance();
+  gm->currentLevel = 3;
+  gm->levelType = 0;
+  if (gm->currentLevel > 4 && gm->currentLevel < 9)
+    gm->levelType = 1;
+  if (gm->currentLevel > 8 && gm->currentLevel < 13)
+    gm->levelType = 2;
+  if (gm->currentLevel > 12 && gm->currentLevel < 16)
+    gm->levelType = 3;
+  if (gm->currentLevel == 16)
+    gm->levelType = 4;
+
+  // if (gm->currentLevel <= 1 ||
+  //     gm->currentLevel == 5 ||
+  //     gm->currentLevel == 9 ||
+  //     gm->currentLevel == 13) {
+  //   gm->hadDarkLevel = false;
+  // }
 
   srcLevelGen(map);
-
   for (int yy = 0; yy < 4; yy++) {
     for (int xx = 0; xx < 4; xx++) {
       scrRoomGen1(map, xx * 10, yy * 8);
