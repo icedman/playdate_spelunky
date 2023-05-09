@@ -10,6 +10,7 @@ typedef struct {
   void *images[16];
 } spriteSheet_t;
 
-spriteSheet_t *SpriteSheet(int id, int state);
+void SpritesInit();
+spriteSheet_t *SpriteSheet(int id, int offset);
 
 #endif // _SPRITES_H_

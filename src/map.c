@@ -160,6 +160,7 @@ entity_t *CreateEntityFromTile(char tile, float x, float y, map_t *map) {
   e->onEnter = def->onEnter;
   e->onExit = def->onExit;
   e->onUpdate = def->onUpdate;
+  e->onRender = def->onRender;
   e->spriteSheet = SpriteSheet(def->type, 0);
 
   RectInitXYWH(&e->collisionBounds, 0, 0, 32, 32);
@@ -222,7 +223,7 @@ void MapCreateEntities(map_t *map, list_t *entities) {
     // snake test
     {
       entity_t *e =
-          CreateEntityFromTile(BAT, map->startX + 14, map->startY, map);
+          CreateEntityFromTile(SNAKE, map->startX + 14, map->startY, map);
       node_t *n = NodeCreate(e, true);
       ListAppend(entities, n);
     }
@@ -240,30 +241,34 @@ void MapSetupWalls(map_t *map, list_t *entities) {
     if (e->type != BRICK) {
       continue;
     }
-    bool up = false;
-    bool down = false;
-    bool left = false;
-    bool right = false;
+    entity_t *up;
+    entity_t *down;
+    entity_t *left;
+    entity_t *right;
 
     vector_t v = e->position;
     v.x += 16;
     v.y -= 16;
-    up = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+    up = EntityAtPoint(v, entities, IsBrickOrBlock);
+    e->above = up;
 
     v = e->position;
     v.x += 16;
     v.y += (16 + 32);
-    down = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+    down = EntityAtPoint(v, entities, IsBrickOrBlock);
+    e->below = down;
 
     v = e->position;
     v.x -= 16;
     v.y += 16;
-    left = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+    left = EntityAtPoint(v, entities, IsBrickOrBlock);
+    e->left = left;
 
     v = e->position;
     v.x += (16 + 32);
     v.y += 16;
-    right = EntityAtPoint(v, entities, IsBrickOrBlock) != NULL;
+    right = EntityAtPoint(v, entities, IsBrickOrBlock);
+    e->right = right;
 
     if (!up) {
       e->spriteSheet = SpriteSheet(CAVE_UP, 0);

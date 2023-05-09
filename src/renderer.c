@@ -77,9 +77,6 @@ void RenderEntities(list_t *entityList, context_t *context) {
   while (n) {
     entity_t *e = (entity_t *)n->data;
     if (e->onRender) {
-      if (e->onEffect) {
-        printf("--\n");
-      }
       e->onRender(e, context);
     } else {
       RenderSprite(e, context);

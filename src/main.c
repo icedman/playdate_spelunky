@@ -21,8 +21,10 @@ void SnakeRegister(int type);
 
 SDL_Window *window;
 
-int width = 400 * 2;
-int height = 240 * 2;
+#define SCALE 3
+
+int width = 400 * SCALE;
+int height = 240 * SCALE;
 
 int spriteWidth = 32;
 int spriteHeight = 32;
@@ -78,6 +80,7 @@ int main(int argc, char **argv) {
   setImageFunctions(_loadImage, _freeImage, _drawImage);
 
   FontInit();
+  SpritesInit();
 
   game_t game;
   GameInit(&game);

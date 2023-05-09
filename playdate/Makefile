@@ -156,6 +156,30 @@ game/src/blocks/pushBlock.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/blocks/pushBlock.c.s
 .PHONY : game/src/blocks/pushBlock.c.s
 
+game/src/characters/bat.o: game/src/characters/bat.c.o
+.PHONY : game/src/characters/bat.o
+
+# target to build an object file
+game/src/characters/bat.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/bat.c.o
+.PHONY : game/src/characters/bat.c.o
+
+game/src/characters/bat.i: game/src/characters/bat.c.i
+.PHONY : game/src/characters/bat.i
+
+# target to preprocess a source file
+game/src/characters/bat.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/bat.c.i
+.PHONY : game/src/characters/bat.c.i
+
+game/src/characters/bat.s: game/src/characters/bat.c.s
+.PHONY : game/src/characters/bat.s
+
+# target to generate assembly for a file
+game/src/characters/bat.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/bat.c.s
+.PHONY : game/src/characters/bat.c.s
+
 game/src/characters/player.o: game/src/characters/player.c.o
 .PHONY : game/src/characters/player.o
 
@@ -203,6 +227,30 @@ game/src/characters/snake.s: game/src/characters/snake.c.s
 game/src/characters/snake.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/snake.c.s
 .PHONY : game/src/characters/snake.c.s
+
+game/src/characters/spider.o: game/src/characters/spider.c.o
+.PHONY : game/src/characters/spider.o
+
+# target to build an object file
+game/src/characters/spider.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/spider.c.o
+.PHONY : game/src/characters/spider.c.o
+
+game/src/characters/spider.i: game/src/characters/spider.c.i
+.PHONY : game/src/characters/spider.i
+
+# target to preprocess a source file
+game/src/characters/spider.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/spider.c.i
+.PHONY : game/src/characters/spider.c.i
+
+game/src/characters/spider.s: game/src/characters/spider.c.s
+.PHONY : game/src/characters/spider.s
+
+# target to generate assembly for a file
+game/src/characters/spider.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spelunky.dir/build.make CMakeFiles/spelunky.dir/game/src/characters/spider.c.s
+.PHONY : game/src/characters/spider.c.s
 
 game/src/context.o: game/src/context.c.o
 .PHONY : game/src/context.o
@@ -672,12 +720,18 @@ help:
 	@echo "... game/src/blocks/pushBlock.o"
 	@echo "... game/src/blocks/pushBlock.i"
 	@echo "... game/src/blocks/pushBlock.s"
+	@echo "... game/src/characters/bat.o"
+	@echo "... game/src/characters/bat.i"
+	@echo "... game/src/characters/bat.s"
 	@echo "... game/src/characters/player.o"
 	@echo "... game/src/characters/player.i"
 	@echo "... game/src/characters/player.s"
 	@echo "... game/src/characters/snake.o"
 	@echo "... game/src/characters/snake.i"
 	@echo "... game/src/characters/snake.s"
+	@echo "... game/src/characters/spider.o"
+	@echo "... game/src/characters/spider.i"
+	@echo "... game/src/characters/spider.s"
 	@echo "... game/src/context.o"
 	@echo "... game/src/context.i"
 	@echo "... game/src/context.s"

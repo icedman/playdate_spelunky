@@ -122,6 +122,7 @@ __declspec(dllexport)
 
     ContextInit(&context, width, height);
     FontInit();
+    SpritesInit();
 
     GameInit(&game);
     ListInit(&entities);
@@ -177,7 +178,7 @@ static int update(void *userdata) {
   game.keys[CRANK] = pd->system->getCrankAngle();
 
   int pre = 8;
-  float dt = 0.04 / pre;
+  float dt = 0.03 / pre;
   for (int i = 0; i < pre; i++) {
     GameUpdate(&game, dt);
   }

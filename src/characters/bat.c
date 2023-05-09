@@ -48,8 +48,10 @@ void BatOnUpdate(entity_t *t, float dt) {
 
   entity_t *topBlock = NULL;
 
-  float distanceToPlayer =
-      VectorDistanceTo(&t->position, &gm->player->position);
+  vector_t pos = t->position;
+  float area = 160;
+  pos.y += (area / 2);
+  float distanceToPlayer = VectorDistanceTo(&pos, &gm->player->position);
 
   // bat logic
   node_t *n = gm->entities->first;
@@ -85,7 +87,7 @@ void BatOnUpdate(entity_t *t, float dt) {
     t->frame = 0;
     VectorZero(&t->velocity);
     t->spriteSheet = SpriteSheet(BAT, HANGING);
-    if (distanceToPlayer < 160) {
+    if (distanceToPlayer < area) {
       t->state = FLYING;
     }
     return;
@@ -114,6 +116,5 @@ void BatOnUpdate(entity_t *t, float dt) {
 
   VectorNormalize(&t->direction);
   t->direction = VectorScaled(&t->direction, flySpeed);
-
   t->velocity = t->direction;
 }

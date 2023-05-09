@@ -66,12 +66,16 @@ void srcEntityGen(map_t *map, list_t *entities) {
         // lamp
         // scarab
         if (Rand(1, 60) == 1) {
-          entity_t *ne = CreateEntityFromTile(BAT, x / 32, y / 32 + 1, map);
+          entity_t *ne =
+              CreateEntityFromTile(SPIDER_HANG, x / 32, y / 32 + 1, map);
           node_t *nn = NodeCreate(ne, true);
           ListAppend(entities, nn);
-          printf("bat!\n");
         } else if (rand(1, 80) == 1) {
-          // instance_create (x, y + 16, ObjType.oSpiderHang);
+          entity_t *ne =
+              CreateEntityFromTile(SPIDER_HANG, x / 32, y / 32 + 1, map);
+          node_t *nn = NodeCreate(ne, true);
+          ListAppend(entities, nn);
+          printf("!\n");
         }
       }
 

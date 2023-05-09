@@ -34,8 +34,12 @@ static spriteSheet_t sprite_defs[] = {
     {ENTRANCE * SHEET_OFFSET, 1, "sprites/blocks/sEntrance.png", 0, 0, {NULL}},
     {EXIT * SHEET_OFFSET, 1, "sprites/blocks/sExit.png", 0, 0, {NULL}},
     {SNAKE * SHEET_OFFSET, 1, "sprites/enemies/sSnakeLeft.png", 0, 0, {NULL}},
+    {SNAKE * SHEET_OFFSET + WALKING, 4, "sprites/enemies/sSnakeWalkL_%d.png", 0, 0, {NULL}},
     {BAT * SHEET_OFFSET, 3, "sprites/enemies/sBatLeft_%d.png", 0, 0, {NULL}},
     {BAT * SHEET_OFFSET + HANGING, 1, "sprites/enemies/sBatHang.png", 0, 0, {NULL}},
+    {SPIDER * SHEET_OFFSET, 4, "sprites/enemies/sSpider_%d.png", 0, 0, {NULL}},
+    {SPIDER_HANG * SHEET_OFFSET, 1, "sprites/enemies/sSpiderHang.png", 0, 0, {NULL}},
+    {SPIDER_HANG * SHEET_OFFSET + JUMPING, 9, "sprites/enemies/sSpiderFlip_%d.png", 0, 0, {NULL}},
     {SPIKES * SHEET_OFFSET, 1, "sprites/traps/sSpikes.png", 0, 0, {NULL}},
     {GIANT_TIKI_HEAD * SHEET_OFFSET, 1, "sprites/traps/sGitantTikiHead.png", 0, 0, {NULL}},
     {CAVE_UP * SHEET_OFFSET, 1, "sprites/blocks/sCaveUp.png", 0, 0, {NULL}},
@@ -44,13 +48,36 @@ static spriteSheet_t sprite_defs[] = {
     {TYPE_END * SHEET_OFFSET}};
 // clang-format on
 
-spriteSheet_t *SpriteSheet(int id, int state) {
-  id *= SHEET_OFFSET;
-  id += state;
+static spriteSheet_t *sprite_defs_cache[TYPE_END];
+
+void SpritesInit() {
   for (int i = 0;; i++) {
     if (i == TYPE_END)
       break;
-    if (sprite_defs[i].id == id) {
+    sprite_defs_cache[i] = NULL;
+  }
+}
+
+spriteSheet_t *SpriteSheet(int id, int offset) {
+  int _id = id * SHEET_OFFSET + offset;
+
+  if (sprite_defs_cache[id]) {
+    spriteSheet_t *sheet = sprite_defs_cache[id];
+    sheet += offset;
+    if (sheet && sheet->id == _id) {
+      return sheet;
+    } else {
+      // printf("from cache %d %d %d\n", id, sheet->id, _id);
+    }
+  }
+
+  for (int i = 0;; i++) {
+    if (sprite_defs[i].id == TYPE_END * SHEET_OFFSET)
+      break;
+    if (sprite_defs[i].id == id * SHEET_OFFSET) {
+      sprite_defs_cache[id] = &sprite_defs[i];
+    }
+    if (sprite_defs[i].id == _id) {
       return &sprite_defs[i];
     }
   }

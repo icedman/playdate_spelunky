@@ -51,6 +51,8 @@ file(GLOB SRC_FILES
     game/src/srcRoomGen1.c
     game/src/characters/player.c
     game/src/characters/snake.c
+    game/src/characters/bat.c
+    game/src/characters/spider.c
     game/src/blocks/pushBlock.c
     game/src/items/whip.c
 )

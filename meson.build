@@ -26,6 +26,7 @@ src_files = [
     'src/srcRoomGen1.c',
     # 'src/srcEntityGen.c',
     'src/characters/snake.c',
+    'src/characters/spider.c',
     'src/characters/bat.c',
     'src/characters/player.c',
     'src/blocks/pushBlock.c',

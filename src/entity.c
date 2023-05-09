@@ -3,6 +3,26 @@
 
 void EntityInit(entity_t *entity) { memset(entity, 0, sizeof(entity_t)); }
 
+void EntityUpdate(entity_t *e, float dt) {
+    vector_t a = VectorScaled(&e->acceleration, dt);
+    e->velocity = VectorAdded(&e->velocity, &a);
+
+    float l = VectorLength(&e->velocity);
+    if (l > e->speed) {
+      VectorNormalize(&e->velocity);
+      e->velocity = VectorScaled(&e->velocity, e->speed);
+    }
+
+    vector_t m = VectorScaled(&e->velocity, dt);
+    e->position = VectorAdded(&e->position, &m);
+    if (e->life > 0) {
+      e->life -= dt;
+      if (e->life <= 0) {
+        e->life = -1;
+      }
+    }
+}
+
 void EntitiesUpdate(list_t *entityList, float dt) {
   node_t *n = entityList->first;
   while (n) {
@@ -12,21 +32,15 @@ void EntitiesUpdate(list_t *entityList, float dt) {
       e->onEnter(e);
       e->entered = true;
     }
+    e->ticks += dt;
     if (e->onUpdate) {
       e->onUpdate(e, dt);
-      e->ticks += dt;
-      // effects
-      if (e->onEffect) {
-        e->onEffect(e, dt);
-      }
+    } else {
+      EntityUpdate(e, dt);
     }
-    vector_t m = VectorScaled(&e->velocity, dt);
-    e->position = VectorAdded(&e->position, &m);
-    if (e->life > 0) {
-      e->life -= dt;
-      if (e->life <= 0) {
-        e->life = -1;
-      }
+    // effects
+    if (e->onEffect) {
+      e->onEffect(e, dt);
     }
     if (e->life == -1) {
       node_t *rm = n;

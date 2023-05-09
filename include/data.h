@@ -3,68 +3,8 @@
 
 #include "entity.h"
 
-typedef enum {
-  EMPTY_SPACE = 0,
-  // blocks
-  START_BLOCKS,
-  PUSH_BLOCK,
-  ALTAR_LEFT,
-  ALTAR_RIGHT,
-  SAC_ALTAR_LEFT,
-  SAC_ALTAR_RIGHT,
-  BLOCK,
-  BRICK,
-  BRICK_2,
-  BRICK_DOWN,
-  BRICK_GOLD,
-  CAVE_BOTTOM,
-  CAVE_BOTTOM_L,
-  CAVE_BOTTOM_R,
-  CAVE_LEFT,
-  CAVE_RIGHT,
-  CAVE_SMOOTH,
-  CAVE_TOP,
-  CAVE_TOP_2,
-  CAVE_UP,
-  CAVE_UP_2,
-  LADDER,
-  LADDER_TOP,
-  VINE,
-  VINE_BOTTOM,
-  VINE_SOURCE,
-  VINE_TOP,
-  ENTRANCE,
-  EXIT,
-  END_BLOCKS,
-  // traps
-  START_TRAPS,
-  GIANT_TIKI_HEAD,
-  SPIKES,
-  SPIKES_BLOOD,
-  END_TRAPS,
-  // characters
-  START_CHARACTERS,
-  PLAYER,
-  DAMSEL,
-  END_CHARACTERS,
-  // enemies
-  START_ENEMIES,
-  SNAKE,
-  BAT,
-  END_ENEMIES,
-  // items
-  START_ITEMS,
-  WHIP,
-  END_ITEMS,
-  // cave
-  START_CAVE,
-  GOLD_IDOL,
-  END_CAVE,
-  TYPE_END,
-} objectType_e;
-
 typedef struct {
-  objectType_e type;
+  entityType_t type;
   void (*onEnter)(struct entity_t *);
   void (*onExit)(struct entity_t *);
   void (*onUpdate)(struct entity_t *, float delta_time);
@@ -72,7 +12,7 @@ typedef struct {
   char *path;
 } objectDefinition_t;
 
-objectDefinition_t *ObjectDefinition(objectType_e t);
+objectDefinition_t *ObjectDefinition(entityType_t t);
 
 bool AreEntitiesNear(entity_t *entity1, entity_t *entity2);
 bool IsSolidEntity(entity_t *entity);
