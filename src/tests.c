@@ -4,6 +4,8 @@
 #include "renderer.h"
 #include "util.h"
 
+#include <stdio.h>
+
 // base on Spelunky Room Generation by Derek Yu && Mossmouth, LLC
 // <http://spelunkyworld.com/>
 
@@ -12,7 +14,7 @@ bool _buildLevel(game_t *gm, scene_t *scn) {
   ListDestroy(gm->entities);
 
   map_t *map = MapInstance();
-  MapInit(map);
+  MapInit((void*)map);
   MapCreateEntities(map, gm->entities);
   MapSetupWalls(map, gm->entities);
 
@@ -59,8 +61,8 @@ void testRender(game_t *gm, scene_t *scn, context_t *context) {
 }
 
 void TestSceneInit(sceneTest_t *scene) {
-  SceneInit(scene);
-  scene->scene.onEnter = testEnter;
-  scene->scene.onUpdate = testUpdate;
-  scene->scene.onRender = testRender;
+  SceneInit((void*)scene);
+  scene->scene.onEnter = (void*)testEnter;
+  scene->scene.onUpdate = (void*)testUpdate;
+  scene->scene.onRender = (void*)testRender;
 }

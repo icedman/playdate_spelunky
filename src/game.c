@@ -12,14 +12,14 @@ void onRender(struct game_t *, struct scene_t *scn, context_t *context) {}
 
 void SceneInit(scene_t *scn) {
   memset(scn, 0, sizeof(scene_t));
-  scn->onEnter = onEnter;
-  scn->onExit = onExit;
-  scn->onUpdate = onUpdate;
-  scn->onRender = onRender;
+  scn->onEnter = (void*)onEnter;
+  scn->onExit = (void*)onExit;
+  scn->onUpdate = (void*)onUpdate;
+  scn->onRender = (void*)onRender;
 }
 
 void GameInit(game_t *gm) {
-  memset(gm, 0, sizeof(game_t));
+  memset((void*)gm, 0, sizeof(game_t));
   gameInstance = gm;
 }
 
@@ -49,19 +49,19 @@ void GameUpdate(game_t *gm, float delta_time) {
   if (gm->scene) {
     if (gm->previousScene != gm->scene) {
       if (gm->previousScene) {
-        gm->previousScene->onExit(gm, gm->scene);
+        gm->previousScene->onExit((void*)gm, (void*)gm->scene);
       }
-      gm->scene->onEnter(gm, gm->scene);
+      gm->scene->onEnter((void*)gm, (void*)gm->scene);
       gm->previousScene = gm->scene;
     }
 
-    gm->scene->onUpdate(gm, gm->scene, delta_time);
+    gm->scene->onUpdate((void*)gm, (void*)gm->scene, delta_time);
   }
 }
 
 void GameRender(game_t *gm, context_t *context) {
   if (gm->scene) {
-    gm->scene->onRender(gm, gm->scene, context);
+    gm->scene->onRender((void*)gm, (void*)gm->scene, context);
   }
 }
 

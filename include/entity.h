@@ -86,8 +86,19 @@ typedef enum {
   STUNNED,
 } entityState_t;
 
+struct entity_t;
+typedef struct entity_impl_t {
+  void (*onEnter)(struct entity_t *);
+  void (*onExit)(struct entity_t *);
+  void (*onUpdate)(struct entity_t *, float delta_time);
+  void (*onRender)(struct entity_t *, context_t *context);
+  void (*onEffect)(struct entity_t *, float delta_time);
+} entity_impl_t;
+
 typedef struct entity_t {
+  entity_impl_t impl;
   entityType_t type;
+
   entityState_t state;
   vector_t position;
   vector_t direction;
@@ -99,12 +110,13 @@ typedef struct entity_t {
   float ticks;
   bool invisible;
 
+  // spelunky
+  float x, y, xVel, yVel, xVelLimit, yVelLimit;
+  float xAcc, yAcc, xAccLimit, yAccLimit;
+  float xVelInteger, yVelInteger;
+  float xFric, yFric;
+
   bool entered;
-  void (*onEnter)(struct entity_t *);
-  void (*onExit)(struct entity_t *);
-  void (*onUpdate)(struct entity_t *, float delta_time);
-  void (*onRender)(struct entity_t *, context_t *context);
-  void (*onEffect)(struct entity_t *, float delta_time);
   void *data;
 
   float effectTime;

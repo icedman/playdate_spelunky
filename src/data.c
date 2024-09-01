@@ -101,7 +101,7 @@ bool IsBrickOrBlock(entity_t *entity) {
 void EnemyEntityDie(entity_t *entity) {
   entity->renderCollisionBounds = true;
   entity->life = 1.0;
-  entity->onEffect = EffectFlicker;
+  ((entity_impl_t *)entity)->onEffect = EffectFlicker;
 }
 
 void EntityCollideEnvironment(entity_t *t, vector_t *direction) {
@@ -116,7 +116,7 @@ void EntityCollideEnvironment(entity_t *t, vector_t *direction) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
 
     if (!IsSolidEntity(e) || !AreEntitiesNear(e, t) || e == t) {
       continue;
@@ -153,7 +153,8 @@ void EntityCollideEnvironment(entity_t *t, vector_t *direction) {
   if (t->topCollision) {
     t->topCollision->renderCollisionBounds = true;
     // rect_t r =
-    //     RectOffset(t->topCollision->collisionBounds, t->topCollision->position);
+    //     RectOffset(t->topCollision->collisionBounds,
+    //     t->topCollision->position);
     // if (r.lb.y > tr.lt.y && (ABS((r.lb.y - tr.lt.y)) < tolerance)) {
     //   t->position.y = r.lb.y - t->collisionBounds.lt.y;
     // }
@@ -202,7 +203,7 @@ void EntityCollideEnvironment(entity_t *t, vector_t *direction) {
 //   node_t *n = gm->entities->first;
 //   while (n) {
 //     entity_t *e = n->data;
-//     n = n->next;
+//     n = (void*)n->next;
 
 //     rect_t r = RectOffset(e->collisionBounds, e->position);
 //     if (!IsSolidEntity(e) || !AreEntitiesNear(e, t) || e == t) {
@@ -290,7 +291,7 @@ entity_t *EntityAtPoint(vector_t pos, list_t *entities,
   node_t *n = entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (filter && !filter(e)) {
       continue;
     }

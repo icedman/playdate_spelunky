@@ -21,8 +21,8 @@ void menuRender(game_t *gm, scene_t *scn, context_t *context) {
 }
 
 void MenuSceneInit(sceneMenu_t *scene) {
-  SceneInit(scene);
-  scene->scene.onEnter = menuEnter;
-  scene->scene.onUpdate = menuUpdate;
-  scene->scene.onRender = menuRender;
+  SceneInit((void*)scene);
+  scene->scene.onEnter = (void*)menuEnter;
+  scene->scene.onUpdate = (void*)menuUpdate;
+  scene->scene.onRender = (void*)menuRender;
 }

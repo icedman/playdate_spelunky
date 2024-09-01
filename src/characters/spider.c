@@ -25,7 +25,7 @@ void SpiderHangOnRender(entity_t *t, context_t *context) {
 }
 
 void SpiderHangOnUpdate(entity_t *t, float dt) {
-  if (t->life > 0 || t->onEffect) {
+  if (t->life > 0 || ((entity_impl_t *)t)->onEffect) {
     // dead or dying
     VectorZero(&t->direction);
     VectorZero(&t->velocity);
@@ -39,7 +39,7 @@ void SpiderHangOnUpdate(entity_t *t, float dt) {
   float flipFallSpeed = fallSpeed * 0.05;
   float climbSpeed = 32 * 4;
 
-  RectInitXYWH(&t->collisionBounds, 0, 0, 32, 32 - 8);
+  RectInitXYWH(&t->collisionBounds, 0, 0, 16, 16 - 8);
   EntityCollideEnvironment(t, &t->velocity);
 
   rect_t tr = RectOffset(t->collisionBounds, t->position);
@@ -60,14 +60,14 @@ void SpiderHangOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (e == t) {
       continue;
     }
     rect_t r = RectOffset(e->collisionBounds, e->position);
     vector_t c = RectCenter(r);
     if (e == gm->player) {
-      if (e->onEffect)
+      if (((entity_impl_t *)e)->onEffect)
         continue;
       if (RectCollide(r, tr)) {
         if (e->state == FALLING && e->position.y + 16 < t->position.y) {
@@ -127,8 +127,8 @@ void SpiderHangOnUpdate(entity_t *t, float dt) {
     t->direction.y = 0;
     t->position.y -= 12;
     // be a jumping spider
-    t->onUpdate = SpiderOnUpdate;
-    t->onRender = NULL;
+    ((entity_impl_t *)t)->onUpdate = SpiderOnUpdate;
+    ((entity_impl_t *)t)->onRender = NULL;
     t->spriteSheet = SpriteSheet(SPIDER, 0);
   }
 
@@ -136,7 +136,7 @@ void SpiderHangOnUpdate(entity_t *t, float dt) {
 }
 
 void SpiderOnUpdate(entity_t *t, float dt) {
-  if (t->life > 0 || t->onEffect) {
+  if (t->life > 0 || ((entity_impl_t *)t)->onEffect) {
     // dead or dying
     VectorZero(&t->direction);
     VectorZero(&t->velocity);
@@ -161,7 +161,7 @@ void SpiderOnUpdate(entity_t *t, float dt) {
   float jumpTime = 0.35;
   float jumpHeight = 32 * 2.25; // 3 tiles
 
-  RectInitXYWH(&t->collisionBounds, 6, 8, 32 - 12, 32 - 8);
+  RectInitXYWH(&t->collisionBounds, 6, 8, 16 - 12, 16 - 8);
   EntityCollideEnvironment(t, &t->velocity);
 
   rect_t tr = RectOffset(t->collisionBounds, t->position);
@@ -189,13 +189,13 @@ void SpiderOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (!AreEntitiesNear(e, t) || e == t) {
       continue;
     }
     rect_t r = RectOffset(e->collisionBounds, e->position);
     if (e == gm->player) {
-      if (e->onEffect)
+      if (((entity_impl_t *)e)->onEffect)
         continue;
       if (RectCollide(r, tr)) {
         if (e->state == FALLING && e->position.y + 16 < t->position.y) {

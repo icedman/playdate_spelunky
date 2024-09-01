@@ -49,7 +49,7 @@ typedef struct {
       vector_t rb;
       vector_t lb;
     };
-  }
+  };
 } rect_t;
 
 void RectInitXYWH(rect_t *r, float x, float y, float w, float h);

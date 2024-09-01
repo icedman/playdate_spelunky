@@ -9,6 +9,7 @@
 void RenderShape(context_t *context, float *points, vector_t pos, float angle,
                  float radius, bool close) {
   points += 3;
+
   polygon_t p;
   p.sides = 0;
   for (int i = 0; i < POLYGON_MAX_SIDES; i++) {
@@ -76,11 +77,12 @@ void RenderEntities(list_t *entityList, context_t *context) {
   node_t *n = entityList->first;
   while (n) {
     entity_t *e = (entity_t *)n->data;
-    if (e->onRender) {
-      e->onRender(e, context);
+    entity_impl_t *ei = (entity_impl_t *)e;
+    if (ei->onRender) {
+      ei->onRender(e, context);
     } else {
       RenderSprite(e, context);
     }
-    n = n->next;
+    n = (void*)n->next;
   }
 }

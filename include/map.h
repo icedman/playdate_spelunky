@@ -29,9 +29,12 @@ void MapCreateEntities(map_t *map, list_t *entities);
 int scrGetRoomY(float ty);
 int scrGetRoomX(float tx);
 void srcLevelGen(map_t *map);
-void srcRoomGen1(map_t *map);
+void scrRoomGen1(map_t *map, int x, int y);
 // void scrRoomGen2(map_t *map, int x, int y);
 // void scrRoomGen3(map_t *map, int x, int y);
 void srcEntityGen(map_t *map, list_t *entities);
+
+void MapInit(map_t *map);
+void MapSetupWalls(map_t *map, list_t *entities);
 
 #endif // _MAP_H_

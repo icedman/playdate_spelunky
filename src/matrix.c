@@ -134,20 +134,20 @@ void MatrixRotation(matrix_t *mrot, float ax, float ay, float az) {
     if (rotSeq & ROTSEQY) {
       if (rotSeq & ROTSEQZ) {
         MatrixMultiply(&mx, &my, &mtmp);
-        MatrixMultiply(&mtmp, &mz, &mrot);
+        MatrixMultiply(&mtmp, &mz, (matrix_t *)&mrot);
         return;
       }
-      MatrixMultiply(&mx, &my, &mrot);
+      MatrixMultiply(&mx, &my, (matrix_t *)&mrot);
       return;
     }
   }
 
   if (rotSeq & ROTSEQZ) {
     if (rotSeq & ROTSEQX) {
-      MatrixMultiply(&mx, &mz, &mrot);
+      MatrixMultiply(&mx, &mz, (matrix_t *)&mrot);
       return;
     }
-    MatrixMultiply(&my, &mz, &mrot);
+    MatrixMultiply(&my, &mz, (matrix_t *)&mrot);
     return;
   }
 }
@@ -219,7 +219,7 @@ void MatrixStackScale2D(matrixStack_t *stack, float sz) {
 }
 
 static matrix_t matrix_rotations[360];
-static matrix_rotations_inited = false;
+static bool matrix_rotations_inited = false;
 void MatrixInitRotation2D(matrix_t *m, float angle) {
   // MatrixRotation(m, 0, 0, (float)angle * 0.0174533);
   int a = ((int)angle + 360 * 4) % 360;

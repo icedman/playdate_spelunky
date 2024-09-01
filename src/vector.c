@@ -15,7 +15,7 @@ void VectorInit(vector_t *v, float x, float y, float z) {
 }
 
 static vector_t vector_rotations[360];
-static vector_rotations_inited = false;
+static bool vector_rotations_inited = false;
 void VectorFromAngle(vector_t *v, float angle) {
   // float r = angle * 0.0174533;
   // float sn = sin(r);

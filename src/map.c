@@ -3,6 +3,8 @@
 #include "game.h"
 #include "sprites.h"
 
+#include <stdio.h>
+
 static map_t map;
 
 map_t *MapInstance() { return &map; }
@@ -153,17 +155,18 @@ entity_t *CreateEntityFromTile(char tile, float x, float y, map_t *map) {
     return NULL;
 
   entity_t *e = (entity_t *)tx_malloc(sizeof(entity_t));
+  entity_impl_t *ei = (entity_impl_t *)e;
   EntityInit(e);
-  VectorInit(&e->position, x * 32, y * 32, 1);
+  VectorInit(&e->position, x * 16, y * 16, 1);
 
   e->type = def->type;
-  e->onEnter = def->onEnter;
-  e->onExit = def->onExit;
-  e->onUpdate = def->onUpdate;
-  e->onRender = def->onRender;
+  ei->onEnter = def->onEnter;
+  ei->onExit = def->onExit;
+  ei->onUpdate = def->onUpdate;
+  ei->onRender = def->onRender;
   e->spriteSheet = SpriteSheet(def->type, 0);
 
-  RectInitXYWH(&e->collisionBounds, 0, 0, 32, 32);
+  RectInitXYWH(&e->collisionBounds, 0, 0, 16, 16);
   return e;
 }
 
@@ -237,7 +240,7 @@ void MapSetupWalls(map_t *map, list_t *entities) {
   node_t *n = entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (e->type != BRICK) {
       continue;
     }
@@ -254,7 +257,7 @@ void MapSetupWalls(map_t *map, list_t *entities) {
 
     v = e->position;
     v.x += 16;
-    v.y += (16 + 32);
+    v.y += (16 + 16);
     down = EntityAtPoint(v, entities, IsBrickOrBlock);
     e->below = down;
 
@@ -265,7 +268,7 @@ void MapSetupWalls(map_t *map, list_t *entities) {
     e->left = left;
 
     v = e->position;
-    v.x += (16 + 32);
+    v.x += (16 + 16);
     v.y += 16;
     right = EntityAtPoint(v, entities, IsBrickOrBlock);
     e->right = right;
@@ -307,7 +310,7 @@ void MapInit(map_t *map) {
   srcLevelGen(map);
   for (int yy = 0; yy < 4; yy++) {
     for (int xx = 0; xx < 4; xx++) {
-      scrRoomGen1(map, xx * 10, yy * 8);
+      scrRoomGen1((void*)map, xx * 10, yy * 8);
     }
   }
 }

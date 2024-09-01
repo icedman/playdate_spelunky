@@ -9,7 +9,7 @@ void BatOnEnter(entity_t *t) {
 }
 
 void BatOnUpdate(entity_t *t, float dt) {
-  if (t->life > 0 || t->onEffect) {
+  if (t->life > 0 || ((entity_impl_t *)t)->onEffect) {
     // dead or dying
     VectorZero(&t->direction);
     VectorZero(&t->velocity);
@@ -57,9 +57,9 @@ void BatOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
 
-    if (AreEntitiesNear(e, t) && !e->onEffect) {
+    if (AreEntitiesNear(e, t) && !((entity_impl_t *)e)->onEffect) {
       rect_t r = RectOffset(e->collisionBounds, e->position);
       if (e == gm->player) {
         if (RectCollide(r, tr)) {

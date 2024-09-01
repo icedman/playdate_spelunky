@@ -56,6 +56,10 @@ void _drawImage(context_t *context, void *image, vector_t pos, bool flipped) {
   dest.y = vt.y + 32 / 2 - sh / 2;
   dest.w = (sw * 2 + 32) / 3;
   dest.h = (sh * 2 + 32) / 3;
+
+  dest.x *= 2;
+  dest.y *= 2;
+
   // SDL_RenderCopy(renderer, image, NULL, &dest);
   SDL_Point center;
   center.x = sw / 2;
@@ -76,8 +80,8 @@ void _drawLine(void *ctx, vector_t v1, vector_t v2) {
 }
 
 int main(int argc, char **argv) {
-  RandomSeed(100);
-  setImageFunctions(_loadImage, _freeImage, _drawImage);
+  FastRandomInit(100);
+  setImageFunctions((void*)_loadImage, (void*)_freeImage, (void*)_drawImage);
 
   FontInit();
   SpritesInit();
@@ -93,10 +97,10 @@ int main(int argc, char **argv) {
   TestSceneInit(&testScene);
   sceneMenu_t menuScene;
   MenuSceneInit(&menuScene);
-  game.menu = &menuScene;
+  game.menu = (void*)&menuScene;
   GameEnterMenu(&game);
 
-  game.scene = &testScene;
+  game.scene = (void*)&testScene;
 
   int frames = 0;
   context_t context;

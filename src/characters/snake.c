@@ -7,7 +7,7 @@
 void SnakeOnEnter(entity_t *t) { t->state = IDLE; }
 
 void SnakeOnUpdate(entity_t *t, float dt) {
-  if (t->life > 0 || t->onEffect) {
+  if (t->life > 0 || ((entity_impl_t *)t)->onEffect) {
     // dead or dying
     VectorZero(&t->direction);
     VectorZero(&t->velocity);
@@ -40,13 +40,13 @@ void SnakeOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (!AreEntitiesNear(e, t) || e == t) {
       continue;
     }
     rect_t r = RectOffset(e->collisionBounds, e->position);
     if (e == gm->player) {
-      if (e->onEffect)
+      if (((entity_impl_t *)e)->onEffect)
         continue;
       if (RectCollide(r, tr)) {
         if (e->state == FALLING && e->position.y + 16 < t->position.y) {

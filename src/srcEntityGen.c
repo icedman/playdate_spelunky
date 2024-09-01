@@ -2,6 +2,8 @@
 // #include "map.h"
 // #include "data.h"
 
+#include <stdio.h>
+
 void srcEntityGen(map_t *map, list_t *entities) {
   game_t *gm = GameInstance();
 
@@ -24,7 +26,7 @@ void srcEntityGen(map_t *map, list_t *entities) {
     node_t *n = entities->first;
     while (n && newNodeIdx < newNodesMax) {
       entity_t *e = n->data;
-      n = n->next;
+      n = (void*)n->next;
 
       float x = e->position.x;
       float y = e->position.y;
@@ -70,7 +72,7 @@ void srcEntityGen(map_t *map, list_t *entities) {
               CreateEntityFromTile(SPIDER_HANG, x / 32, y / 32 + 1, map);
           node_t *nn = NodeCreate(ne, true);
           ListAppend(entities, nn);
-        } else if (rand(1, 80) == 1) {
+        } else if (Rand(1, 80) == 1) {
           entity_t *ne =
               CreateEntityFromTile(SPIDER_HANG, x / 32, y / 32 + 1, map);
           node_t *nn = NodeCreate(ne, true);

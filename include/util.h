@@ -4,6 +4,7 @@
 
 #include "stdtypes.h"
 
+#define SQR(a) (a*a)
 #define ABS(a) (a * SGN(a))
 #define SGN(a) ((a < 0) ? -1 : 1)
 #define MIN(a, b) ((a < b) ? a : b)

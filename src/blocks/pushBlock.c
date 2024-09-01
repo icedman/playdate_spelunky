@@ -1,6 +1,7 @@
 #include "context.h"
 #include "entity.h"
 #include "game.h"
+#include "data.h"
 
 void PushBlockOnEnter(entity_t *t) {}
 
@@ -31,7 +32,7 @@ void PushBlockOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (!AreEntitiesNear(e, t) || e == t) {
       continue;
     }

@@ -1,6 +1,7 @@
 #include "context.h"
 #include "entity.h"
 #include "game.h"
+#include "data.h"
 
 void WhipOnEnter(entity_t *t) { t->invisible = true; }
 
@@ -20,7 +21,7 @@ void WhipOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     if (!AreEntitiesNear(e, t) || e == t) {
       continue;
     }

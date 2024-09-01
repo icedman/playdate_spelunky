@@ -5,7 +5,7 @@
 #include "util.h"
 
 void PlayerHurt(entity_t *t, int amount) {
-  t->onEffect = EffectFlicker;
+  ((entity_impl_t *)t)->onEffect = EffectFlicker;
   t->effectTime = 1.25;
   t->renderCollisionBounds = true;
 }
@@ -27,11 +27,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   game_t *gm = GameInstance();
   t->frameSpeed = 12;
 
-  bool tryAttack = false;
-  bool tryJump = false;
-  bool tryDuck = false;
-
-  RectInitXYWH(&t->collisionBounds, 6, 6, 32 - 12, 32 - 6);
+  RectInitXYWH(&t->collisionBounds, 6, 6, 16 - 12, 16 - 6);
 
   // input
   bool pressingDown = gm->keys[DOWN];
@@ -151,7 +147,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
   node_t *n = gm->entities->first;
   while (n) {
     entity_t *e = n->data;
-    n = n->next;
+    n = (void*)n->next;
     rect_t r = RectOffset(e->collisionBounds, e->position);
     if (IsLadderEntity(e)) {
       if (RectContains(r, center)) {
@@ -182,7 +178,7 @@ void PlayerOnUpdate(entity_t *t, float dt) {
       rightBlock = e;
     }
   }
-  
+
   if (blockTop) {
     jumping = false;
     blockTop->renderCollisionBounds = true;
@@ -250,5 +246,4 @@ void PlayerOnUpdate(entity_t *t, float dt) {
     t->acceleration.y = 0;
     t->velocity.y = 0;
   }
-
 }

@@ -29,6 +29,7 @@ src_files = [
     'src/characters/spider.c',
     'src/characters/bat.c',
     'src/characters/player.c',
+    # 'src/characters/player/characterStepEvent.c',
     'src/blocks/pushBlock.c',
     'src/items/whip.c',
 ]

@@ -11,5 +11,6 @@ void RenderEntities(list_t *entityList, context_t *context);
 void RenderParticle(entity_t *entity, context_t *context);
 void RenderExplosion(entity_t *entity, context_t *context);
 void RenderFloatingText(entity_t *entity, context_t *context);
+void RenderSprite(entity_t *e, context_t *context);
 
 #endif // _RENDERER_H_
